@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaturaGenerator", "MaturaGenerator\MaturaGenerator.csproj", "{27A81593-F3FE-47C7-A7BD-2435CE6ECE67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27A81593-F3FE-47C7-A7BD-2435CE6ECE67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A81593-F3FE-47C7-A7BD-2435CE6ECE67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A81593-F3FE-47C7-A7BD-2435CE6ECE67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A81593-F3FE-47C7-A7BD-2435CE6ECE67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
