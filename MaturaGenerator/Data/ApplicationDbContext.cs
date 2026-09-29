@@ -1,3 +1,5 @@
+using MaturaGenerator.Models;
+using MaturaGenerator.Models.DomainConstraints;
 using Microsoft.EntityFrameworkCore;
 
 namespace MaturaGenerator.Data;
@@ -9,5 +11,9 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    // Add DbSet<ModelName> properties here later as you develop features
+    public DbSet<ProblemTemplate> ProblemTemplates { get; set; }
+    public DbSet<TemplateRule> TemplateRules { get; set; }
+    public DbSet<DomainConstraint> DomainConstraints { get; set; }
+    public DbSet<IntDomain> IntDomains { get; set; }
+    public DbSet<FractionDomain> FractionDomains { get; set; }
 }
