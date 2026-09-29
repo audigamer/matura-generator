@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MaturaGenerator.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(MaturaDbContext))]
     [Migration("20260923161234_InitialCreate")]
     partial class InitialCreate
     {

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MaturaGenerator.Data;
 
-public class ApplicationDbContext : DbContext
+public class MaturaDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public MaturaDbContext(DbContextOptions<MaturaDbContext> options)
         : base(options)
     {
     }
