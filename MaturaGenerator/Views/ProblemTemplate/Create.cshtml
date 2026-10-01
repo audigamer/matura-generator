@@ -1,0 +1,38 @@
+﻿@model MaturaGenerator.Models.ProblemTemplate
+
+@{
+    ViewData["Title"] = "Create Problem Template";
+}
+
+<h2>Create Problem Template</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Structure" class="form-label"></label>
+                <input asp-for="Structure" class="form-control" />
+                <span asp-validation-for="Structure" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="TargetGrade" class="form-label"></label>
+                <input asp-for="TargetGrade" class="form-control" type="number" min="1" max="12" />
+                <span asp-validation-for="TargetGrade" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Template</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>

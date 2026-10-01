@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MaturaGenerator.Models.ProblemTemplate>
+
+<h2>All Problem Templates</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Grade</th>
+        <th>Structure</th>
+        <th>Created At</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.TargetGrade</td>
+            <td>@item.Structure</td>
+            <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
+        </tr>
+    }
+    </tbody>
+</table>
