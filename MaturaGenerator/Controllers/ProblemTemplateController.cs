@@ -38,4 +38,17 @@ public class ProblemTemplateController(MaturaDbContext context) : Controller
         
         return RedirectToAction(nameof(Index));
     }
+
+
+    public IActionResult Delete(int id)
+    {
+        var template =  _context.ProblemTemplates.Find(id);
+        if (template != null)
+        {
+            _context.ProblemTemplates.Remove(template);
+            _context.SaveChanges();
+        }
+
+        return RedirectToAction(nameof(Index));
+    }
 }
