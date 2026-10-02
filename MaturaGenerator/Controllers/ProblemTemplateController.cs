@@ -1,5 +1,7 @@
-﻿using MaturaGenerator.Data;
+using MaturaGenerator.Data;
 using MaturaGenerator.Models;
+using MaturaGenerator.Models.DomainConstraints;
+using MaturaGenerator.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,17 +22,19 @@ public class ProblemTemplateController(MaturaDbContext context) : Controller
     }
     
     [HttpGet]
-    public IActionResult Create()
-    {
-        return View();
-    }
+    public IActionResult Create() => View();
     
     [HttpPost] 
-    public IActionResult Create(ProblemTemplate template)
+    public IActionResult Create(ProblemTemplate template, List<DomainInputModel> domainInputs)
     {
         if (!ModelState.IsValid)
         {
             return View(template);
+        }
+
+        foreach (var d in domainInputs)
+        {
+            template.Domains.Add(d.ToDomainEntity());
         }
 
         _context.ProblemTemplates.Add(template);
@@ -39,10 +43,9 @@ public class ProblemTemplateController(MaturaDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 
-
     public IActionResult Delete(int id)
     {
-        var template =  _context.ProblemTemplates.Find(id);
+        var template = _context.ProblemTemplates.Find(id);
         if (template != null)
         {
             _context.ProblemTemplates.Remove(template);
