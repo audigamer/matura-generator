@@ -11,35 +11,33 @@ public class ProblemTemplateController(MaturaDbContext context) : Controller
 {
     private readonly MaturaDbContext _context = context;
 
-    public IActionResult Index()
-    {
-        List<ProblemTemplate> templates = _context.ProblemTemplates
-            .AsNoTracking()
-            .OrderByDescending(t => t.CreatedAt)
-            .ToList();
+    public IActionResult Index() =>
+        View(_context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToList());
 
-        return View(templates);
-    }
-    
     [HttpGet]
-    public IActionResult Create() => View();
-    
-    [HttpPost] 
-    public IActionResult Create(ProblemTemplate template, List<DomainInputModel> domainInputs)
+    public IActionResult Create() => View(new ProblemTemplateViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(ProblemTemplateViewModel model)
     {
         if (!ModelState.IsValid)
         {
-            return View(template);
+            return View(model);
         }
 
-        foreach (var d in domainInputs)
+        var template = new ProblemTemplate
         {
-            template.Domains.Add(d.ToDomainEntity());
-        }
+            Title = model.Title,
+            Structure = model.Structure,
+            TargetGrade = model.TargetGrade,
+            CreatedAt = DateTime.UtcNow,
+            Domains = model.Domains.Select(d => d.ToDomainEntity()).ToList()
+        };
 
         _context.ProblemTemplates.Add(template);
         _context.SaveChanges();
-        
+
         return RedirectToAction(nameof(Index));
     }
 

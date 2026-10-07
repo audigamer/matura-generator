@@ -1,4 +1,4 @@
-@model MaturaGenerator.Models.ProblemTemplate
+@model MaturaGenerator.Models.ViewModels.ProblemTemplateViewModel
 
 @{
     ViewData["Title"] = "Create Problem Template";
@@ -20,7 +20,7 @@
 
             <div class="mb-3">
                 <label asp-for="Structure" class="form-label"></label>
-                <input asp-for="Structure" id="structureInput" class="form-control" placeholder="e.g. @@A * x^2 + @@B * x + @@c = 0" />
+                <input asp-for="Structure" id="structureInput" class="form-control" placeholder="e.g. @@A * x^2 + @@B * x + @@C = 0" />
                 <span asp-validation-for="Structure" class="text-danger"></span>
             </div>
 
@@ -33,7 +33,7 @@
             <div class="mb-4">
                 <h5>Constant Domains</h5>
                 <div id="domainsContainer" class="border rounded p-3 bg-light">
-                    <p id="emptyState" class="text-muted m-0">Type in a constant (such as <code>@@A</code>) in the Structure, then edit it here.</p>
+                    <p id="emptyState" class="text-muted m-0">Type constants in the Structure (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.</p>
                 </div>
             </div>
 
@@ -43,54 +43,47 @@
     </div>
 </div>
 
+<template id="domainCardTemplate">
+    <div class="domain-card bg-white border rounded p-3 mb-2">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-primary fs-6 domain-badge"></span>
+            <input type="hidden" class="domain-name" />
+            <select class="form-select form-select-sm w-auto type-select">
+                <option value="int">Integer</option>
+                <option value="fraction">Fraction</option>
+            </select>
+        </div>
+        <div class="int-fields d-flex gap-2">
+            <div>
+                <label class="form-label small text-muted mb-0">Min</label>
+                <input type="number" class="form-control form-control-sm min-val" value="1" />
+            </div>
+            <div>
+                <label class="form-label small text-muted mb-0">Max</label>
+                <input type="number" class="form-control form-control-sm max-val" value="10" />
+            </div>
+        </div>
+        <div class="fraction-fields d-none row g-2">
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Min Numerator</label>
+                <input type="number" class="form-control form-control-sm min-num" value="1" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Max Numerator</label>
+                <input type="number" class="form-control form-control-sm max-num" value="10" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Min Denominator</label>
+                <input type="number" class="form-control form-control-sm min-den" value="1" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Max Denominator</label>
+                <input type="number" class="form-control form-control-sm max-den" value="10" />
+            </div>
+        </div>
+    </div>
+</template>
+
 @section Scripts {
-    <script>
-        const input = document.getElementById('structureInput');
-        const container = document.getElementById('domainsContainer');
-        const emptyState = document.getElementById('emptyState');
-
-        input.addEventListener('input', () => {
-            const matches = [...new Set((input.value.match(/@@[a-zA-Z]/g) || []).map(m => m.substring(1)))];
-            emptyState.style.display = matches.length ? 'none' : 'block';
-
-            document.querySelectorAll('.domain-card').forEach(el => {
-                if (!matches.includes(el.dataset.constant)) el.remove();
-            });
-
-            matches.forEach((c, idx) => {
-                if (document.querySelector(`.domain-card[data-constant="${c}"]`)) return;
-
-                const card = document.createElement('div');
-                card.className = 'domain-card bg-white border rounded p-2 mb-2';
-                card.dataset.constant = c;
-                card.innerHTML = `
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge bg-primary fs-6">@@${c}</span>
-                        <input type="hidden" name="domainInputs[${idx}].ConstantName" value="${c}" />
-                        <select name="domainInputs[${idx}].Type" class="form-select form-select-sm w-auto type-select">
-                            <option value="int">Integer</option>
-                            <option value="fraction">Fraction</option>
-                        </select>
-                    </div>
-                    <div class="int-fields d-flex gap-2">
-                        <input type="number" name="domainInputs[${idx}].MinValue" class="form-control form-control-sm" placeholder="Min" value="1" />
-                        <input type="number" name="domainInputs[${idx}].MaxValue" class="form-control form-control-sm" placeholder="Max" value="10" />
-                    </div>
-                    <div class="fraction-fields d-none row g-2">
-                        <div class="col-6"><input type="number" name="domainInputs[${idx}].MinNumerator" class="form-control form-control-sm" placeholder="Min Numerator" value="1" /></div>
-                        <div class="col-6"><input type="number" name="domainInputs[${idx}].MaxNumerator" class="form-control form-control-sm" placeholder="Max Numerator" value="10" /></div>
-                        <div class="col-6"><input type="number" name="domainInputs[${idx}].MinDenominator" class="form-control form-control-sm" placeholder="Min Denominator" value="1" /></div>
-                        <div class="col-6"><input type="number" name="domainInputs[${idx}].MaxDenominator" class="form-control form-control-sm" placeholder="Max Denominator" value="10" /></div>
-                    </div>`;
-
-                card.querySelector('.type-select').addEventListener('change', (e) => {
-                    const isFrac = e.target.value === 'fraction';
-                    card.querySelector('.int-fields').classList.toggle('d-none', isFrac);
-                    card.querySelector('.fraction-fields').classList.toggle('d-none', !isFrac);
-                });
-
-                container.appendChild(card);
-            });
-        });
-    </script>
+    <script src="~/js/domain-editor.js" asp-append-version="true"></script>
 }

@@ -31,4 +31,25 @@ public class DomainInputModel
             MaxValue = MaxValue
         }
     };
+
+    public static DomainInputModel FromDomainEntity(DomainConstraint domain) => domain switch
+    {
+        FractionDomain f => new DomainInputModel
+        {
+            ConstantName = f.ConstantNames,
+            Type = "fraction",
+            MinNumerator = f.MinNumerator,
+            MaxNumerator = f.MaxNumerator,
+            MinDenominator = f.MinDenominator,
+            MaxDenominator = f.MaxDenominator
+        },
+        IntDomain i => new DomainInputModel
+        {
+            ConstantName = i.ConstantNames,
+            Type = "int",
+            MinValue = i.MinValue,
+            MaxValue = i.MaxValue
+        },
+        _ => new DomainInputModel { ConstantName = domain.ConstantNames }
+    };
 }
