@@ -1,6 +1,5 @@
 using MaturaGenerator.Data;
 using MaturaGenerator.Models;
-using MaturaGenerator.Models.DomainConstraints;
 using MaturaGenerator.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +40,69 @@ public class ProblemTemplateController(MaturaDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
+    public IActionResult Edit(int id)
+    {
+        var template = _context.ProblemTemplates
+            .Include(t => t.Domains)
+            .FirstOrDefault(t => t.Id == id);
+
+        if (template == null)
+        {
+            return NotFound();
+        }
+
+        var model = new ProblemTemplateViewModel
+        {
+            Id = template.Id,
+            Title = template.Title,
+            Structure = template.Structure,
+            TargetGrade = template.TargetGrade,
+            Domains = template.Domains.Select(DomainInputModel.FromDomainEntity).ToList()
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, ProblemTemplateViewModel model)
+    {
+        if (id != model.Id)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var existing = _context.ProblemTemplates
+            .Include(t => t.Domains)
+            .FirstOrDefault(t => t.Id == id);
+
+        if (existing == null)
+        {
+            return NotFound();
+        }
+
+        existing.Title = model.Title;
+        existing.Structure = model.Structure;
+        existing.TargetGrade = model.TargetGrade;
+
+        existing.Domains.Clear();
+        foreach (var d in model.Domains)
+        {
+            existing.Domains.Add(d.ToDomainEntity());
+        }
+
+        _context.SaveChanges();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
     public IActionResult Delete(int id)
     {
         var template = _context.ProblemTemplates.Find(id);

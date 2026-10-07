@@ -1,0 +1,135 @@
+@model MaturaGenerator.Models.ViewModels.ProblemTemplateViewModel
+
+@{
+    ViewData["Title"] = "Edit Problem Template";
+}
+
+<h2>Edit Problem Template</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-7">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Structure" class="form-label"></label>
+                <input asp-for="Structure" id="structureInput" class="form-control" placeholder="e.g. @@A * x^2 + @@B * x + @@C = 0" />
+                <span asp-validation-for="Structure" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TargetGrade" class="form-label"></label>
+                <input asp-for="TargetGrade" class="form-control" type="number" min="1" max="12" />
+                <span asp-validation-for="TargetGrade" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <h5>Constant Domains</h5>
+                <div id="domainsContainer" class="border rounded p-3 bg-light">
+                    <p id="emptyState" class="text-muted m-0" style="@(Model.Domains.Count > 0 ? "display:none;" : "")">
+                        Type constants in the Structure (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.
+                    </p>
+
+                    @for (int i = 0; i < Model.Domains.Count; i++)
+                    {
+                        <div class="domain-card bg-white border rounded p-3 mb-2" data-constant="@Model.Domains[i].ConstantName">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="badge bg-primary fs-6 domain-badge">@@@Model.Domains[i].ConstantName</span>
+                                <input type="hidden" class="domain-name" asp-for="Domains[i].ConstantName" />
+                                <select class="form-select form-select-sm w-auto type-select" asp-for="Domains[i].Type">
+                                    <option value="int">Integer</option>
+                                    <option value="fraction">Fraction</option>
+                                </select>
+                            </div>
+                            <div class="int-fields d-flex gap-2 @(Model.Domains[i].Type == "fraction" ? "d-none" : "")">
+                                <div>
+                                    <label class="form-label small text-muted mb-0">Min</label>
+                                    <input type="number" class="form-control form-control-sm min-val" asp-for="Domains[i].MinValue" />
+                                </div>
+                                <div>
+                                    <label class="form-label small text-muted mb-0">Max</label>
+                                    <input type="number" class="form-control form-control-sm max-val" asp-for="Domains[i].MaxValue" />
+                                </div>
+                            </div>
+                            <div class="fraction-fields row g-2 @(Model.Domains[i].Type == "int" ? "d-none" : "")">
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-0">Min Numerator</label>
+                                    <input type="number" class="form-control form-control-sm min-num" asp-for="Domains[i].MinNumerator" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-0">Max Numerator</label>
+                                    <input type="number" class="form-control form-control-sm max-num" asp-for="Domains[i].MaxNumerator" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-0">Min Denominator</label>
+                                    <input type="number" class="form-control form-control-sm min-den" asp-for="Domains[i].MinDenominator" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-0">Max Denominator</label>
+                                    <input type="number" class="form-control form-control-sm max-den" asp-for="Domains[i].MaxDenominator" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>
+
+<template id="domainCardTemplate">
+    <div class="domain-card bg-white border rounded p-3 mb-2">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="badge bg-primary fs-6 domain-badge"></span>
+            <input type="hidden" class="domain-name" />
+            <select class="form-select form-select-sm w-auto type-select">
+                <option value="int">Integer</option>
+                <option value="fraction">Fraction</option>
+            </select>
+        </div>
+        <div class="int-fields d-flex gap-2">
+            <div>
+                <label class="form-label small text-muted mb-0">Min</label>
+                <input type="number" class="form-control form-control-sm min-val" value="1" />
+            </div>
+            <div>
+                <label class="form-label small text-muted mb-0">Max</label>
+                <input type="number" class="form-control form-control-sm max-val" value="10" />
+            </div>
+        </div>
+        <div class="fraction-fields d-none row g-2">
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Min Numerator</label>
+                <input type="number" class="form-control form-control-sm min-num" value="1" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Max Numerator</label>
+                <input type="number" class="form-control form-control-sm max-num" value="10" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Min Denominator</label>
+                <input type="number" class="form-control form-control-sm min-den" value="1" />
+            </div>
+            <div class="col-6">
+                <label class="form-label small text-muted mb-0">Max Denominator</label>
+                <input type="number" class="form-control form-control-sm max-den" value="10" />
+            </div>
+        </div>
+    </div>
+</template>
+
+@section Scripts {
+    <script src="~/js/domain-editor.js" asp-append-version="true"></script>
+}
