@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using MaturaGenerator.Data;
 
+using MaturaGenerator.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<MaturaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IProblemGeneratorService, ProblemGeneratorService>();
 
 builder.Services.AddControllersWithViews();
 
