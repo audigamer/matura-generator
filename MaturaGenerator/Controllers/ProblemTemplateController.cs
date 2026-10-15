@@ -4,14 +4,33 @@ using MaturaGenerator.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using MaturaGenerator.Services;
+
 namespace MaturaGenerator.Controllers;
 
-public class ProblemTemplateController(MaturaDbContext context) : Controller
+public class ProblemTemplateController(MaturaDbContext context, IProblemGeneratorService problemGenerator) : Controller
 {
     private readonly MaturaDbContext _context = context;
+    private readonly IProblemGeneratorService _problemGenerator = problemGenerator;
 
     public IActionResult Index() =>
         View(_context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToList());
+
+    [HttpGet]
+    public IActionResult Generate(int id)
+    {
+        var template = _context.ProblemTemplates
+            .Include(t => t.Domains)
+            .FirstOrDefault(t => t.Id == id);
+
+        if (template == null)
+        {
+            return NotFound();
+        }
+
+        var generated = _problemGenerator.Generate(template);
+        return View(generated);
+    }
 
     [HttpGet]
     public IActionResult Create() => View(new ProblemTemplateViewModel());

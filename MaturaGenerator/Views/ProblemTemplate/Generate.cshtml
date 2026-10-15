@@ -1,0 +1,52 @@
+@model MaturaGenerator.Models.GeneratedProblem
+
+@{
+    ViewData["Title"] = "Generated Problem";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">@Model.Template.Title</h4>
+            <span class="badge bg-light text-primary">Grade @Model.Template.TargetGrade</span>
+        </div>
+        <div class="card-body text-center py-5">
+            <h5 class="text-muted mb-3">Generated Expression</h5>
+            <div class="display-6 my-4 p-4 bg-light rounded border">
+                $$@Model.Latex$$
+            </div>
+            <div>
+                <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-primary btn-lg me-2">
+                    <i class="bi bi-arrow-repeat"></i> Regenerate
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Back to List</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Details & Constant Values</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Original Structure:</strong> <code>@Model.Template.Structure</code></p>
+                    <p><strong>Generated LaTeX:</strong> <code>@Model.Latex</code></p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Generated Constants:</h6>
+                    <ul class="list-group">
+                        @foreach (var kvp in Model.ConstantAssignments)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Constant <strong>@@@kvp.Key</strong></span>
+                                <span class="badge bg-secondary rounded-pill fs-6">$@kvp.Value$</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
