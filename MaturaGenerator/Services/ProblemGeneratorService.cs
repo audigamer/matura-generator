@@ -1,12 +1,13 @@
-using System.Text.RegularExpressions;
+using MaturaGenerator.MathEngine.Ast;
+using MaturaGenerator.MathEngine.Parsing;
+using MaturaGenerator.MathEngine.Rendering;
+using MaturaGenerator.MathEngine.Transforms;
 using MaturaGenerator.Models;
 
 namespace MaturaGenerator.Services;
 
 public class ProblemGeneratorService : IProblemGeneratorService
 {
-    private static readonly Regex ConstantPlaceholderRegex = new(@"@([a-zA-Z0-9_]+)", RegexOptions.Compiled);
-
     public GeneratedProblem Generate(ProblemTemplate template)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -38,23 +39,32 @@ public class ProblemGeneratorService : IProblemGeneratorService
             }
         }
 
-        // Render structure by substituting placeholder constants
-        var rendered = ConstantPlaceholderRegex.Replace(template.Structure, match =>
+        // 1. Parse template structure into AST
+        MathNode rawAst;
+        try
         {
-            var varName = match.Groups[1].Value;
-            if (assignments.TryGetValue(varName, out var value))
-            {
-                return value?.ToString() ?? string.Empty;
-            }
+            rawAst = MathParser.Parse(template.Structure);
+        }
+        catch (Exception ex)
+        {
+            throw new FormatException($"Failed to parse problem structure '{template.Structure}': {ex.Message}", ex);
+        }
 
-            // Fallback: leave match as-is if no domain was specified
-            return match.Value;
-        });
+        // 2. Substitute constants with generated values
+        var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
+
+        // 3. Canonically simplify AST (eliminates "+ -", redundant 1 multipliers, etc.)
+        var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
+
+        // 4. Render to LaTeX
+        var latex = LatexRenderer.Render(simplifiedAst);
 
         return new GeneratedProblem
         {
             Template = template,
-            RenderedText = rendered,
+            RenderedText = latex,
+            Latex = latex,
+            Ast = simplifiedAst,
             ConstantAssignments = assignments
         };
     }
