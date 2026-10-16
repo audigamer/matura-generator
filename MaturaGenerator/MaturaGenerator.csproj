@@ -12,7 +12,10 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
-      <PackageReference Include="NCalcSync" Version="5.3.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MaturaGenerator.MathEngine\MaturaGenerator.MathEngine.csproj" />
     </ItemGroup>
 
 </Project>
