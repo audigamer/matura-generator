@@ -1,3 +1,4 @@
+using MaturaGenerator.Evaluation;
 using MaturaGenerator.MathEngine.Ast;
 using MaturaGenerator.MathEngine.Parsing;
 using MaturaGenerator.MathEngine.Rendering;
@@ -6,8 +7,11 @@ using MaturaGenerator.Models;
 
 namespace MaturaGenerator.Services;
 
-public class ProblemGeneratorService : IProblemGeneratorService
+public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGeneratorService
 {
+    private readonly IRuleEvaluator _ruleEvaluator = ruleEvaluator;
+    private const int MaxAttempts = 150;
+
     public GeneratedProblem Generate(ProblemTemplate template)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -20,24 +24,32 @@ public class ProblemGeneratorService : IProblemGeneratorService
         }
 
         var rng = Random.Shared;
-        var assignments = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        var ruleExpressions = (template.Rules ?? Enumerable.Empty<TemplateRule>())
+            .Select(r => r.Expression)
+            .Where(e => !string.IsNullOrWhiteSpace(e))
+            .ToList();
 
-        // Map domains to their designated constant names
-        foreach (var domain in template.Domains)
+        Dictionary<string, object>? validAssignments = null;
+
+        for (int attempt = 1; attempt <= MaxAttempts; attempt++)
         {
-            if (string.IsNullOrWhiteSpace(domain.ConstantNames))
-                continue;
+            var candidate = RollConstants(template.Domains, rng);
 
-            var names = domain.ConstantNames
-                .Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            foreach (var name in names)
+            if (ruleExpressions.Count == 0 || _ruleEvaluator.SatisfiesAll(ruleExpressions, candidate))
             {
-                var cleanName = name.TrimStart('@');
-                var value = domain.GenerateValue(rng);
-                assignments[cleanName] = value;
+                validAssignments = candidate;
+                break;
             }
         }
+
+        if (validAssignments == null)
+        {
+            throw new InvalidOperationException(
+                $"Unable to satisfy template rules for ProblemTemplate ID {template.Id} ('{template.Title}') after {MaxAttempts} attempts. " +
+                $"Please verify that the domains and rules are mathematically satisfiable.");
+        }
+
+        var assignments = validAssignments;
 
         // 1. Parse template structure into AST
         MathNode rawAst;
@@ -67,5 +79,28 @@ public class ProblemGeneratorService : IProblemGeneratorService
             Ast = simplifiedAst,
             ConstantAssignments = assignments
         };
+    }
+
+    private static Dictionary<string, object> RollConstants(IEnumerable<DomainConstraint> domains, Random rng)
+    {
+        var assignments = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var domain in domains)
+        {
+            if (string.IsNullOrWhiteSpace(domain.ConstantNames))
+                continue;
+
+            var names = domain.ConstantNames
+                .Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            foreach (var name in names)
+            {
+                var cleanName = name.TrimStart('@');
+                var value = domain.GenerateValue(rng);
+                assignments[cleanName] = value;
+            }
+        }
+
+        return assignments;
     }
 }
