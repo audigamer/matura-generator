@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MaturaGenerator.Data;
-
+using MaturaGenerator.Evaluation;
 using MaturaGenerator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MaturaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<IRuleEvaluator, NCalcRuleEvaluator>();
 builder.Services.AddScoped<IProblemGeneratorService, ProblemGeneratorService>();
 
 builder.Services.AddControllersWithViews();
