@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-7">
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-3">
@@ -34,6 +34,21 @@
                 <h5>Constant Domains</h5>
                 <div id="domainsContainer" class="border rounded p-3 bg-light">
                     <p id="emptyState" class="text-muted m-0">Type constants in the Structure (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Invariant Rules</h5>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="addRuleBtn">
+                        + Add Rule
+                    </button>
+                </div>
+                <p class="text-muted small mb-2">
+                    Boolean expressions that constants must satisfy. Examples: <code>A != 0</code>, <code>gcd(A, B) == 1</code>, <code>2 | C</code>, <code>A &gt; B</code>.
+                </p>
+                <div id="rulesContainer" class="border rounded p-3 bg-light">
+                    <p id="emptyRulesState" class="text-muted m-0">No rules defined. Click "+ Add Rule" to add one.</p>
                 </div>
             </div>
 

@@ -4,23 +4,25 @@ using MaturaGenerator.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using MaturaGenerator.Evaluation;
 using MaturaGenerator.Services;
 
 namespace MaturaGenerator.Controllers;
 
-public class ProblemTemplateController(MaturaDbContext context, IProblemGeneratorService problemGenerator) : Controller
+public class ProblemTemplateController(
+    MaturaDbContext context,
+    IProblemGeneratorService problemGenerator,
+    IRuleEvaluator ruleEvaluator) : Controller
 {
-    private readonly MaturaDbContext _context = context;
-    private readonly IProblemGeneratorService _problemGenerator = problemGenerator;
-
     public IActionResult Index() =>
-        View(_context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToList());
+        View(context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToList());
 
     [HttpGet]
     public IActionResult Generate(int id)
     {
-        var template = _context.ProblemTemplates
+        var template = context.ProblemTemplates
             .Include(t => t.Domains)
+            .Include(t => t.Rules)
             .FirstOrDefault(t => t.Id == id);
 
         if (template == null)
@@ -28,8 +30,20 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
             return NotFound();
         }
 
-        var generated = _problemGenerator.Generate(template);
-        return View(generated);
+        try
+        {
+            var generated = problemGenerator.Generate(template);
+            return View(generated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            var failedProblem = new GeneratedProblem
+            {
+                Template = template,
+                ErrorMessage = ex.Message
+            };
+            return View(failedProblem);
+        }
     }
 
     [HttpGet]
@@ -39,6 +53,8 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
     [ValidateAntiForgeryToken]
     public IActionResult Create(ProblemTemplateViewModel model)
     {
+        ValidateRules(model);
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -50,11 +66,15 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
             Structure = model.Structure,
             TargetGrade = model.TargetGrade,
             CreatedAt = DateTime.UtcNow,
-            Domains = model.Domains.Select(d => d.ToDomainEntity()).ToList()
+            Domains = model.Domains.Select(d => d.ToDomainEntity()).ToList(),
+            Rules = model.Rules
+                .Where(r => !string.IsNullOrWhiteSpace(r))
+                .Select(r => new TemplateRule { Expression = r.Trim() })
+                .ToList()
         };
 
-        _context.ProblemTemplates.Add(template);
-        _context.SaveChanges();
+        context.ProblemTemplates.Add(template);
+        context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
@@ -62,8 +82,9 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
     [HttpGet]
     public IActionResult Edit(int id)
     {
-        var template = _context.ProblemTemplates
+        var template = context.ProblemTemplates
             .Include(t => t.Domains)
+            .Include(t => t.Rules)
             .FirstOrDefault(t => t.Id == id);
 
         if (template == null)
@@ -77,7 +98,8 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
             Title = template.Title,
             Structure = template.Structure,
             TargetGrade = template.TargetGrade,
-            Domains = template.Domains.Select(DomainInputModel.FromDomainEntity).ToList()
+            Domains = template.Domains.Select(DomainInputModel.FromDomainEntity).ToList(),
+            Rules = template.Rules.Select(r => r.Expression).ToList()
         };
 
         return View(model);
@@ -92,13 +114,16 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
             return NotFound();
         }
 
+        ValidateRules(model);
+
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var existing = _context.ProblemTemplates
+        var existing = context.ProblemTemplates
             .Include(t => t.Domains)
+            .Include(t => t.Rules)
             .FirstOrDefault(t => t.Id == id);
 
         if (existing == null)
@@ -116,7 +141,13 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
             existing.Domains.Add(d.ToDomainEntity());
         }
 
-        _context.SaveChanges();
+        existing.Rules.Clear();
+        foreach (var r in model.Rules.Where(r => !string.IsNullOrWhiteSpace(r)))
+        {
+            existing.Rules.Add(new TemplateRule { Expression = r.Trim() });
+        }
+
+        context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
@@ -124,13 +155,25 @@ public class ProblemTemplateController(MaturaDbContext context, IProblemGenerato
     [HttpPost]
     public IActionResult Delete(int id)
     {
-        var template = _context.ProblemTemplates.Find(id);
+        var template = context.ProblemTemplates.Find(id);
         if (template != null)
         {
-            _context.ProblemTemplates.Remove(template);
-            _context.SaveChanges();
+            context.ProblemTemplates.Remove(template);
+            context.SaveChanges();
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private void ValidateRules(ProblemTemplateViewModel model)
+    {
+        for (int i = 0; i < model.Rules.Count; i++)
+        {
+            var error = ruleEvaluator.ValidateRule(model.Rules[i]);
+            if (error != null)
+            {
+                ModelState.AddModelError($"Rules[{i}]", $"Invalid rule syntax: {error}");
+            }
+        }
     }
 }

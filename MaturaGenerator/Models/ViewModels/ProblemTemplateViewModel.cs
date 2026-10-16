@@ -18,4 +18,8 @@ public class ProblemTemplateViewModel
     public int TargetGrade { get; set; } = 7;
 
     public List<DomainInputModel> Domains { get; set; } = new();
+
+    // Collection of invariant rule expressions evaluated via NCalc
+    // Examples: "A != 0", "isinteger(C / 2)", "A > B"
+    public List<string> Rules { get; set; } = new();
 }

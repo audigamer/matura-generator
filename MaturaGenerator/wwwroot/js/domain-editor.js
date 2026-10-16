@@ -65,4 +65,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     input.addEventListener('input', sync);
     sync(); // Run once on page load
+
+    // --- Rules Management ---
+    const addRuleBtn = document.getElementById('addRuleBtn');
+    const rulesContainer = document.getElementById('rulesContainer');
+    const emptyRulesState = document.getElementById('emptyRulesState');
+
+    if (addRuleBtn && rulesContainer) {
+        function reindexRules() {
+            const rows = rulesContainer.querySelectorAll('.rule-row');
+            if (emptyRulesState) {
+                emptyRulesState.style.display = rows.length ? 'none' : 'block';
+            }
+            rows.forEach((row, idx) => {
+                const input = row.querySelector('.rule-input');
+                if (input) {
+                    input.name = `Rules[${idx}]`;
+                }
+            });
+        }
+
+        addRuleBtn.addEventListener('click', () => {
+            const row = document.createElement('div');
+            row.className = 'rule-row d-flex gap-2 mb-2 align-items-center';
+            row.innerHTML = `
+                <input type="text" class="form-control form-control-sm rule-input" placeholder="e.g. gcd(A, B) == 1" />
+                <button type="button" class="btn btn-outline-danger btn-sm remove-rule-btn">&times;</button>
+            `;
+
+            row.querySelector('.remove-rule-btn').addEventListener('click', () => {
+                row.remove();
+                reindexRules();
+            });
+
+            rulesContainer.appendChild(row);
+            reindexRules();
+            row.querySelector('.rule-input').focus();
+        });
+
+        // Attach delete listener to any pre-existing rule rows (e.g. from Edit view)
+        rulesContainer.querySelectorAll('.remove-rule-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.closest('.rule-row').remove();
+                reindexRules();
+            });
+        });
+
+        reindexRules();
+    }
 });
