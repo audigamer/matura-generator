@@ -11,8 +11,8 @@ public class TemplateRule
     public int Id { get; set; }
 
     // The expression which defines the rule.
-    // Examples: "N > M", "gcd(A, B) = 1", "2 | C"
-    // TODO: Implement this.
+    // Examples: "N > M", "gcd(A, B) = 1", "isinteger(C / 2)"
+    
     [Required]
     [MaxLength(500)]
     public string Expression { get; set; } = string.Empty;
