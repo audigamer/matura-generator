@@ -3,7 +3,6 @@ using MaturaGenerator.Models;
 using MaturaGenerator.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using MaturaGenerator.Evaluation;
 using MaturaGenerator.Services;
 
@@ -23,6 +22,7 @@ public class ProblemTemplateController(
         var template = context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
+            .Include(t => t.AnswerRule)
             .FirstOrDefault(t => t.Id == id);
 
         if (template == null)
@@ -70,7 +70,8 @@ public class ProblemTemplateController(
             Rules = model.Rules
                 .Where(r => !string.IsNullOrWhiteSpace(r))
                 .Select(r => new TemplateRule { Expression = r.Trim() })
-                .ToList()
+                .ToList(),
+            AnswerRule = model.AnswerRule.ToAnswerEntity()
         };
 
         context.ProblemTemplates.Add(template);
@@ -85,6 +86,7 @@ public class ProblemTemplateController(
         var template = context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
+            .Include(t => t.AnswerRule).ThenInclude(t => t.CorrectAnswerRule)
             .FirstOrDefault(t => t.Id == id);
 
         if (template == null)
@@ -99,7 +101,8 @@ public class ProblemTemplateController(
             Statement = template.Statement,
             TargetGrade = template.TargetGrade,
             Domains = template.Domains.Select(DomainInputModel.FromDomainEntity).ToList(),
-            Rules = template.Rules.Select(r => r.Expression).ToList()
+            Rules = template.Rules.Select(r => r.Expression).ToList(),
+            AnswerRule = AnswersInputModel.FromAnswerEntity(template.AnswerRule)
         };
 
         return View(model);
@@ -124,6 +127,7 @@ public class ProblemTemplateController(
         var existing = context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
+            .Include(t => t.AnswerRule)
             .FirstOrDefault(t => t.Id == id);
 
         if (existing == null)
@@ -146,6 +150,8 @@ public class ProblemTemplateController(
         {
             existing.Rules.Add(new TemplateRule { Expression = r.Trim() });
         }
+
+        existing.AnswerRule = model.AnswerRule.ToAnswerEntity();
 
         context.SaveChanges();
 

@@ -22,4 +22,6 @@ public class ProblemTemplateViewModel
     // Collection of invariant rule expressions evaluated via NCalc
     // Examples: "A != 0", "isinteger(C / 2)", "A > B"
     public List<string> Rules { get; set; } = new();
+
+    public AnswersInputModel AnswerRule { get; set; } = new();
 }

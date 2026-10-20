@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using MaturaGenerator.Models.AnswerRules;
 
 namespace MaturaGenerator.Models;
-
 
 // A ProblemTemplate is used to tell the engine how to generate procedural
 // problems. It includes a Structure defining the operators and variables,
@@ -27,6 +27,8 @@ public class ProblemTemplate
     public int TargetGrade { get; set; } = 7;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    
+    public AnswerRule? AnswerRule { get; set; }
     
     // Domains define where each variable's values come from (type and range).
     public virtual ICollection<DomainConstraint> Domains { get; set; } = new List<DomainConstraint>();
