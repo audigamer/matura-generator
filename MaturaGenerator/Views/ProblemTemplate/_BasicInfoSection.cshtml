@@ -1,0 +1,22 @@
+@model MaturaGenerator.Models.ViewModels.ProblemTemplateViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="mb-3">
+    <label asp-for="Title" class="form-label"></label>
+    <input asp-for="Title" class="form-control" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Statement" class="form-label"></label>
+    <textarea asp-for="Statement" id="statementInput" class="form-control" rows="3"></textarea>
+    <span asp-validation-for="Statement" class="text-danger"></span>
+    <div class="form-text">Place math structures inside square brackets <code>[...]</code>, using constants prefixed with <code>@@</code> (e.g. <code>@@A</code>, <code>@@B</code>).</div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="TargetGrade" class="form-label"></label>
+    <input asp-for="TargetGrade" class="form-control" type="number" min="1" max="12" />
+    <span asp-validation-for="TargetGrade" class="text-danger"></span>
+</div>

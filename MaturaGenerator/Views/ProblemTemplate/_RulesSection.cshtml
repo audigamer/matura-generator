@@ -1,0 +1,26 @@
+@model List<string>
+
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">Invariant Rules</h5>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="addRuleBtn">
+            + Add Rule
+        </button>
+    </div>
+    <p class="text-muted small mb-2">
+        Boolean expressions that constants must satisfy. Examples: <code>A != 0</code>, <code>gcd(A, B) == 1</code>, <code>A &gt; B</code>.
+    </p>
+    <div id="rulesContainer" class="border rounded p-3 bg-light">
+        <p id="emptyRulesState" class="text-muted m-0" style="@(Model.Count > 0 ? "display:none;" : "")">
+            No rules defined. Click "+ Add Rule" to add one.
+        </p>
+
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <div class="rule-row d-flex gap-2 mb-2 align-items-center">
+                <input type="text" class="form-control form-control-sm rule-input" name="Rules[@i]" value="@Model[i]" placeholder="e.g. gcd(A, B) == 1" />
+                <button type="button" class="btn btn-outline-danger btn-sm remove-rule-btn">&times;</button>
+            </div>
+        }
+    </div>
+</div>
