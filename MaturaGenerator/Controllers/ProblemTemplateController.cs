@@ -63,7 +63,7 @@ public class ProblemTemplateController(
         var template = new ProblemTemplate
         {
             Title = model.Title,
-            Structure = model.Structure,
+            Statement = model.Statement,
             TargetGrade = model.TargetGrade,
             CreatedAt = DateTime.UtcNow,
             Domains = model.Domains.Select(d => d.ToDomainEntity()).ToList(),
@@ -96,7 +96,7 @@ public class ProblemTemplateController(
         {
             Id = template.Id,
             Title = template.Title,
-            Structure = template.Structure,
+            Statement = template.Statement,
             TargetGrade = template.TargetGrade,
             Domains = template.Domains.Select(DomainInputModel.FromDomainEntity).ToList(),
             Rules = template.Rules.Select(r => r.Expression).ToList()
@@ -132,7 +132,7 @@ public class ProblemTemplateController(
         }
 
         existing.Title = model.Title;
-        existing.Structure = model.Structure;
+        existing.Statement = model.Statement;
         existing.TargetGrade = model.TargetGrade;
 
         existing.Domains.Clear();

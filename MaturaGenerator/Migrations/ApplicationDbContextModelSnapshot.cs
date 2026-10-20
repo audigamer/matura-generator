@@ -65,10 +65,10 @@ namespace MaturaGenerator.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Structure")
+                    b.Property<string>("Statement")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("TargetGrade")
                         .HasColumnType("int");

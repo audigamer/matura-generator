@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MaturaGenerator.Evaluation;
 using MaturaGenerator.MathEngine.Ast;
 using MaturaGenerator.MathEngine.Parsing;
@@ -9,7 +10,7 @@ namespace MaturaGenerator.Services;
 
 public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGeneratorService
 {
-    private readonly IRuleEvaluator _ruleEvaluator = ruleEvaluator;
+    private static readonly Regex MathBracketRegex = new(@"\[(.*?)\]", RegexOptions.Compiled);
     private const int MaxAttempts = 150;
 
     public GeneratedProblem Generate(ProblemTemplate template)
@@ -24,7 +25,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         }
 
         var rng = Random.Shared;
-        var ruleExpressions = (template.Rules ?? Enumerable.Empty<TemplateRule>())
+        var ruleExpressions = template.Rules
             .Select(r => r.Expression)
             .Where(e => !string.IsNullOrWhiteSpace(e))
             .ToList();
@@ -35,7 +36,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         {
             var candidate = RollConstants(template.Domains, rng);
 
-            if (ruleExpressions.Count == 0 || _ruleEvaluator.SatisfiesAll(ruleExpressions, candidate))
+            if (ruleExpressions.Count == 0 || ruleEvaluator.SatisfiesAll(ruleExpressions, candidate))
             {
                 validAssignments = candidate;
                 break;
@@ -50,33 +51,34 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         }
 
         var assignments = validAssignments;
+        MathNode? lastAst = null;
 
-        // 1. Parse template structure into AST
-        MathNode rawAst;
-        try
+        var statement = template.Statement;
+
+        var renderedStatement = MathBracketRegex.Replace(statement, match =>
         {
-            rawAst = MathParser.Parse(template.Structure);
-        }
-        catch (Exception ex)
-        {
-            throw new FormatException($"Failed to parse problem structure '{template.Structure}': {ex.Message}", ex);
-        }
-
-        // 2. Substitute constants with generated values
-        var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
-
-        // 3. Canonically simplify AST (eliminates "+ -", redundant 1 multipliers, etc.)
-        var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
-
-        // 4. Render to LaTeX
-        var latex = LatexRenderer.Render(simplifiedAst);
+            var mathExpr = match.Groups[1].Value.Trim();
+            try
+            {
+                var rawAst = MathParser.Parse(mathExpr);
+                var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
+                var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
+                lastAst = simplifiedAst;
+                var latex = LatexRenderer.Render(simplifiedAst);
+                return $"${latex}$";
+            }
+            catch (Exception ex)
+            {
+                throw new FormatException($"Failed to parse math expression '[{mathExpr}]' in statement: {ex.Message}", ex);
+            }
+        });
 
         return new GeneratedProblem
         {
             Template = template,
-            RenderedText = latex,
-            Latex = latex,
-            Ast = simplifiedAst,
+            RenderedText = renderedStatement,
+            Latex = renderedStatement,
+            Ast = lastAst,
             ConstantAssignments = assignments
         };
     }

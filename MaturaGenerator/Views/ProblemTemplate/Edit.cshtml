@@ -21,9 +21,10 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="Structure" class="form-label"></label>
-                <input asp-for="Structure" id="structureInput" class="form-control" placeholder="e.g. @@A * x^2 + @@B * x + @@C = 0" />
-                <span asp-validation-for="Structure" class="text-danger"></span>
+                <label asp-for="Statement" class="form-label"></label>
+                <textarea asp-for="Statement" id="statementInput" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Statement" class="text-danger"></span>
+                <div class="form-text">Place math structures inside square brackets <code>[...]</code>, using constants prefixed with <code>@@</code> (e.g. <code>@@A</code>, <code>@@B</code>).</div>
             </div>
 
             <div class="mb-3">
@@ -36,7 +37,7 @@
                 <h5>Constant Domains</h5>
                 <div id="domainsContainer" class="border rounded p-3 bg-light">
                     <p id="emptyState" class="text-muted m-0" style="@(Model.Domains.Count > 0 ? "display:none;" : "")">
-                        Type constants in the Structure (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.
+                        Type constants in the Statement (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.
                     </p>
 
                     @for (int i = 0; i < Model.Domains.Count; i++)

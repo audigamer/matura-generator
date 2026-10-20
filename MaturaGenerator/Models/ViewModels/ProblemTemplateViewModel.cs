@@ -11,8 +11,8 @@ public class ProblemTemplateViewModel
     public string Title { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
-    public string Structure { get; set; } = string.Empty;
+    [MaxLength(2000)]
+    public string Statement { get; set; } = string.Empty;
 
     [Range(1, 12)]
     public int TargetGrade { get; set; } = 7;

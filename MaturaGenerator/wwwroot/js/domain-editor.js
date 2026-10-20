@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const input = document.getElementById('structureInput');
+    const input = document.getElementById('statementInput');
     const container = document.getElementById('domainsContainer');
     const emptyState = document.getElementById('emptyState');
     const template = document.getElementById('domainCardTemplate');
@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
             emptyState.style.display = matches.length ? 'none' : 'block';
         }
 
-        // Remove cards for constants no longer in the structure
+        // Remove cards for constants no longer in the statement
         container.querySelectorAll('.domain-card').forEach(card => {
             if (!matches.includes(card.dataset.constant)) {
                 card.remove();

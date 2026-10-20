@@ -30,9 +30,9 @@ else
             <span class="badge bg-light text-primary">Grade @Model.Template.TargetGrade</span>
         </div>
         <div class="card-body text-center py-5">
-            <h5 class="text-muted mb-3">Generated Expression</h5>
-            <div class="display-6 my-4 p-4 bg-light rounded border">
-                $$@Model.Latex$$
+            <h5 class="text-muted mb-3">Generated Problem</h5>
+            <div class="fs-4 my-4 p-4 bg-light rounded border text-start">
+                @Model.RenderedText
             </div>
             <div>
                 <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-primary btn-lg me-2">

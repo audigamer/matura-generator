@@ -16,12 +16,12 @@ public class ProblemTemplate
     [MaxLength(150)]
     public string Title { get; set; } = string.Empty;
 
-    // Structure defines the syntax tree of the problem, including
-    // constants, variables and the operations between them.
-    // Example: "@Ax^2 + @Bx * @C = 0"
+    // Statement is the text of the problem with the math structures inside.
+    // Math structures are inside square brackets.
+    // e.g. "Solve this quadratic equation: [@Ax^2 + @Bx * @C = 0]."
     [Required]
-    [MaxLength(500)]
-    public string Structure { get; set; } = string.Empty;
+    [MaxLength(2000)]
+    public string Statement { get; set; } = string.Empty;
 
     [Range(1, 12)]
     public int TargetGrade { get; set; } = 7;

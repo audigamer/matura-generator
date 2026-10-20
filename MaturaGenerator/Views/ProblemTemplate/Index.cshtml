@@ -7,7 +7,7 @@
     <tr>
         <th>Title</th>
         <th>Grade</th>
-        <th>Structure</th>
+        <th>Statement</th>
         <th>Created At</th>
     </tr>
     </thead>
@@ -17,7 +17,7 @@
         <tr>
             <td>@item.Title</td>
             <td>@item.TargetGrade</td>
-            <td>@item.Structure</td>
+            <td>@item.Statement</td>
             <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
             <td>
                 <a asp-action="Generate" asp-route-id="@item.Id" class="btn btn-primary btn-sm me-1">Practice</a>
