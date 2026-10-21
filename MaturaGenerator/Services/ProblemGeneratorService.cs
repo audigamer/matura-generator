@@ -15,6 +15,23 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
 
     public GeneratedProblem Generate(ProblemTemplate template)
     {
+        ValidateTemplate(template);
+
+        var assignments = ResolveValidAssignments(template);
+        var (renderedStatement, ast) = RenderStatement(template.Statement, assignments);
+
+        return new GeneratedProblem
+        {
+            Template = template,
+            RenderedText = renderedStatement,
+            Latex = renderedStatement,
+            Ast = ast,
+            ConstantAssignments = assignments
+        };
+    }
+
+    private static void ValidateTemplate(ProblemTemplate template)
+    {
         ArgumentNullException.ThrowIfNull(template);
 
         if (template.Domains is null)
@@ -23,14 +40,15 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
                 $"Cannot generate a problem from ProblemTemplate ID {template.Id} ('{template.Title}') because its '{nameof(template.Domains)}' collection was not loaded. " +
                 $"Ensure you queried the template using '.Include(t => t.Domains)'.");
         }
+    }
 
+    private Dictionary<string, object> ResolveValidAssignments(ProblemTemplate template)
+    {
         var rng = Random.Shared;
         var ruleExpressions = template.Rules
             .Select(r => r.Expression)
             .Where(e => !string.IsNullOrWhiteSpace(e))
             .ToList();
-
-        Dictionary<string, object>? validAssignments = null;
 
         for (int attempt = 1; attempt <= MaxAttempts; attempt++)
         {
@@ -38,49 +56,49 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
 
             if (ruleExpressions.Count == 0 || ruleEvaluator.SatisfiesAll(ruleExpressions, candidate))
             {
-                validAssignments = candidate;
-                break;
+                return candidate;
             }
         }
 
-        if (validAssignments == null)
-        {
-            throw new InvalidOperationException(
-                $"Unable to satisfy template rules for ProblemTemplate ID {template.Id} ('{template.Title}') after {MaxAttempts} attempts. " +
-                $"Please verify that the domains and rules are mathematically satisfiable.");
-        }
+        throw new InvalidOperationException(
+            $"Unable to satisfy template rules for ProblemTemplate ID {template.Id} ('{template.Title}') after {MaxAttempts} attempts. " +
+            $"Please verify that the domains and rules are mathematically satisfiable.");
+    }
 
-        var assignments = validAssignments;
+    private static (string RenderedText, MathNode? LastAst) RenderStatement(
+        string statement, 
+        Dictionary<string, object> assignments)
+    {
         MathNode? lastAst = null;
 
-        var statement = template.Statement;
-
-        var renderedStatement = MathBracketRegex.Replace(statement, match =>
+        var renderedText = MathBracketRegex.Replace(statement, match =>
         {
             var mathExpr = match.Groups[1].Value.Trim();
-            try
-            {
-                var rawAst = MathParser.Parse(mathExpr);
-                var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
-                var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
-                lastAst = simplifiedAst;
-                var latex = LatexRenderer.Render(simplifiedAst);
-                return $"${latex}$";
-            }
-            catch (Exception ex)
-            {
-                throw new FormatException($"Failed to parse math expression '[{mathExpr}]' in statement: {ex.Message}", ex);
-            }
+            var (latex, ast) = RenderMathExpression(mathExpr, assignments);
+            lastAst = ast;
+            return $"${latex}$";
         });
 
-        return new GeneratedProblem
+        return (renderedText, lastAst);
+    }
+
+    private static (string Latex, MathNode Ast) RenderMathExpression(
+        string mathExpr, 
+        Dictionary<string, object> assignments)
+    {
+        try
         {
-            Template = template,
-            RenderedText = renderedStatement,
-            Latex = renderedStatement,
-            Ast = lastAst,
-            ConstantAssignments = assignments
-        };
+            var rawAst = MathParser.Parse(mathExpr);
+            var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
+            var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
+            var latex = LatexRenderer.Render(simplifiedAst);
+
+            return (latex, simplifiedAst);
+        }
+        catch (Exception ex)
+        {
+            throw new FormatException($"Failed to parse math expression '[{mathExpr}]' in statement: {ex.Message}", ex);
+        }
     }
 
     private static Dictionary<string, object> RollConstants(IEnumerable<DomainConstraint> domains, Random rng)
