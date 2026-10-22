@@ -15,10 +15,10 @@
             <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-warning btn-sm">
                 <i class="bi bi-arrow-repeat"></i> Try Again
             </a>
-            <a asp-action="Edit" asp-route-id="@Model.Template.Id" class="btn btn-outline-secondary btn-sm">
+            <a asp-action="Edit" asp-controller="ProblemTemplate" asp-route-id="@Model.Template.Id" class="btn btn-outline-secondary btn-sm">
                 Edit Template Rules
             </a>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+            <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-sm">Back to List</a>
         </div>
     </div>
 }
@@ -38,7 +38,7 @@ else
                 <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-primary btn-lg me-2">
                     <i class="bi bi-arrow-repeat"></i> Regenerate
                 </a>
-                <a asp-action="Index" class="btn btn-outline-secondary btn-lg">Back to List</a>
+                <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-lg">Back to List</a>
             </div>
         </div>
     </div>
