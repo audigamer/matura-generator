@@ -86,7 +86,7 @@ public class ProblemTemplateController(
         var template = context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
-            .Include(t => t.AnswerRule).ThenInclude(t => t.CorrectAnswerRule)
+            .Include(t => t.AnswerRule)
             .FirstOrDefault(t => t.Id == id);
 
         if (template == null)
@@ -150,6 +150,11 @@ public class ProblemTemplateController(
         {
             existing.Rules.Add(new TemplateRule { Expression = r.Trim() });
         }
+
+        if (existing.AnswerRule != null)
+        {
+            context.AnswerRules.Remove(existing.AnswerRule);
+        } 
 
         existing.AnswerRule = model.AnswerRule.ToAnswerEntity();
 

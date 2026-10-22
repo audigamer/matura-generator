@@ -1,50 +1,50 @@
-﻿using MaturaGenerator.Models.AnswerRules;
+using MaturaGenerator.Models.AnswerRules;
 
 namespace MaturaGenerator.Models.ViewModels;
 
 public class AnswersInputModel
 {
-    public string CorrectAnswerRule { get; set; }
+    public string CorrectAnswerRule { get; set; } = string.Empty;
 
     public string Type { get; set; } = "custom"; // custom or multichoice
 
     public int SliderBottomBound { get; set; }
     public int SliderUpperBound { get; set; }
 
-    public List<String> ChoiceRules { get; set; } = new();
+    public List<string> ChoiceRules { get; set; } = new();
 
     public AnswerRule ToAnswerEntity() => Type switch
     {
         "custom" => new CustomAnswerRule
         {
-            CorrectAnswerRule = new TemplateRule { Expression = CorrectAnswerRule.Trim() },
+            CorrectAnswerRule = CorrectAnswerRule?.Trim() ?? string.Empty,
             SliderBottomBound = SliderBottomBound,
             SliderUpperBound = SliderUpperBound
         },
         _ => new MultiChoiceAnswerRule
         {
-            CorrectAnswerRule = new TemplateRule { Expression = CorrectAnswerRule.Trim() },
+            CorrectAnswerRule = CorrectAnswerRule?.Trim() ?? string.Empty,
             ChoiceRules = ChoiceRules
                 .Where(r => !string.IsNullOrWhiteSpace(r))
-                .Select(r => new TemplateRule { Expression = r.Trim() })
+                .Select(r => r.Trim())
                 .ToList()
         }
     };
     
-    public static AnswersInputModel FromAnswerEntity(AnswerRule rule) => rule switch
+    public static AnswersInputModel FromAnswerEntity(AnswerRule? rule) => rule switch
     {
         CustomAnswerRule custom => new AnswersInputModel
         {
             Type = "custom",
-            CorrectAnswerRule = custom.CorrectAnswerRule.Expression,
+            CorrectAnswerRule = custom.CorrectAnswerRule,
             SliderBottomBound = custom.SliderBottomBound,
             SliderUpperBound = custom.SliderUpperBound
         },
         MultiChoiceAnswerRule multi => new AnswersInputModel
         {
             Type = "multichoice",
-            CorrectAnswerRule = multi.CorrectAnswerRule.Expression,
-            ChoiceRules = multi.ChoiceRules.Select(r => r.Expression).ToList()
+            CorrectAnswerRule = multi.CorrectAnswerRule,
+            ChoiceRules = multi.ChoiceRules.ToList()
         },
         _ => new AnswersInputModel()
     };

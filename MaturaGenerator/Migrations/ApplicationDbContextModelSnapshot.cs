@@ -30,17 +30,23 @@ namespace MaturaGenerator.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CorrectAnswerRuleId")
-                        .HasColumnType("int");
+                    b.Property<string>("CorrectAnswerRule")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
+                    b.Property<int>("ProblemTemplateId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CorrectAnswerRuleId");
+                    b.HasIndex("ProblemTemplateId")
+                        .IsUnique();
 
                     b.ToTable("AnswerRules");
 
@@ -89,9 +95,6 @@ namespace MaturaGenerator.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnswerRuleId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -110,8 +113,6 @@ namespace MaturaGenerator.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnswerRuleId");
-
                     b.ToTable("ProblemTemplates");
                 });
 
@@ -128,15 +129,10 @@ namespace MaturaGenerator.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int?>("MultiChoiceAnswerRuleId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProblemTemplateId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MultiChoiceAnswerRuleId");
 
                     b.HasIndex("ProblemTemplateId");
 
@@ -159,6 +155,10 @@ namespace MaturaGenerator.Migrations
             modelBuilder.Entity("MaturaGenerator.Models.AnswerRules.MultiChoiceAnswerRule", b =>
                 {
                     b.HasBaseType("MaturaGenerator.Models.AnswerRules.AnswerRule");
+
+                    b.PrimitiveCollection<string>("ChoiceRules")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("MultiChoiceAnswerRule");
                 });
@@ -197,13 +197,13 @@ namespace MaturaGenerator.Migrations
 
             modelBuilder.Entity("MaturaGenerator.Models.AnswerRules.AnswerRule", b =>
                 {
-                    b.HasOne("MaturaGenerator.Models.TemplateRule", "CorrectAnswerRule")
-                        .WithMany()
-                        .HasForeignKey("CorrectAnswerRuleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("MaturaGenerator.Models.ProblemTemplate", "ProblemTemplate")
+                        .WithOne("AnswerRule")
+                        .HasForeignKey("MaturaGenerator.Models.AnswerRules.AnswerRule", "ProblemTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CorrectAnswerRule");
+                    b.Navigation("ProblemTemplate");
                 });
 
             modelBuilder.Entity("MaturaGenerator.Models.DomainConstraint", b =>
@@ -217,22 +217,8 @@ namespace MaturaGenerator.Migrations
                     b.Navigation("ProblemTemplate");
                 });
 
-            modelBuilder.Entity("MaturaGenerator.Models.ProblemTemplate", b =>
-                {
-                    b.HasOne("MaturaGenerator.Models.AnswerRules.AnswerRule", "AnswerRule")
-                        .WithMany()
-                        .HasForeignKey("AnswerRuleId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("AnswerRule");
-                });
-
             modelBuilder.Entity("MaturaGenerator.Models.TemplateRule", b =>
                 {
-                    b.HasOne("MaturaGenerator.Models.AnswerRules.MultiChoiceAnswerRule", null)
-                        .WithMany("ChoiceRules")
-                        .HasForeignKey("MultiChoiceAnswerRuleId");
-
                     b.HasOne("MaturaGenerator.Models.ProblemTemplate", "ProblemTemplate")
                         .WithMany("Rules")
                         .HasForeignKey("ProblemTemplateId")
@@ -244,14 +230,11 @@ namespace MaturaGenerator.Migrations
 
             modelBuilder.Entity("MaturaGenerator.Models.ProblemTemplate", b =>
                 {
+                    b.Navigation("AnswerRule");
+
                     b.Navigation("Domains");
 
                     b.Navigation("Rules");
-                });
-
-            modelBuilder.Entity("MaturaGenerator.Models.AnswerRules.MultiChoiceAnswerRule", b =>
-                {
-                    b.Navigation("ChoiceRules");
                 });
 #pragma warning restore 612, 618
         }

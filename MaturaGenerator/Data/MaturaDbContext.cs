@@ -20,20 +20,4 @@ public class MaturaDbContext : DbContext
     public DbSet<AnswerRule> AnswerRules { get; set; }
     public DbSet<CustomAnswerRule> CustomAnswerRules { get; set; }
     public DbSet<MultiChoiceAnswerRule> MultiChoiceAnswerRules { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        // Break multiple cascade paths for SQL Server
-        modelBuilder.Entity<ProblemTemplate>()
-            .HasOne(p => p.AnswerRule)
-            .WithMany()
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<AnswerRule>()
-            .HasOne(a => a.CorrectAnswerRule)
-            .WithMany()
-            .OnDelete(DeleteBehavior.Restrict);
-    }
 }
