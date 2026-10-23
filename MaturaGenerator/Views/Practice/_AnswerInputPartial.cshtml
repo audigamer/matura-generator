@@ -1,0 +1,45 @@
+@using MaturaGenerator.Models.AnswerRules
+@model MaturaGenerator.Models.ViewModels.PracticeSessionViewModel.Active
+
+<div class="my-4 mx-auto" style="max-width: 500px;">
+    @switch (Model.Problem.Template.AnswerRule)
+    {
+        case CustomAnswerRule custom:
+            <form id="answerForm" asp-controller="Practice" asp-action="Check" method="get" class="text-start">
+                <input type="hidden" name="sessionId" value="@Model.SessionId" />
+
+                <label for="answerSlider" class="form-label d-flex justify-content-between">
+                    <span>Select your answer:</span>
+                    <span class="fw-bold fs-5 text-primary" id="sliderValue">@custom.SliderBottomBound</span>
+                </label>
+
+                <input type="range"
+                       class="form-range"
+                       id="answerSlider"
+                       name="answer"
+                       min="@custom.SliderBottomBound"
+                       max="@custom.SliderUpperBound"
+                       value="@custom.SliderBottomBound"
+                       step="1" />
+
+                <div class="d-flex justify-content-between text-muted small mb-3">
+                    <span>@custom.SliderBottomBound</span>
+                    <span>@custom.SliderUpperBound</span>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-success w-100">
+                    Submit Answer
+                </button>
+            </form>
+            break;
+
+        case MultiChoiceAnswerRule:
+            throw new NotImplementedException("Multi-choice answer rules are not yet implemented.");
+
+        default:
+            <div class="alert alert-secondary mb-0">No answer rule configured for this problem.</div>
+            break;
+    }
+
+    <div id="resultContainer" class="mt-3"></div>
+</div>

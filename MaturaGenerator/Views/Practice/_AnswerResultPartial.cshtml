@@ -1,2 +1,15 @@
-﻿@model MaturaGenerator.Models.ViewModels.AnswerCheckResult
+﻿@using static MaturaGenerator.Models.ViewModels.AnswerCheckResult
+@model MaturaGenerator.Models.ViewModels.AnswerCheckResult
 
+@{
+    string message = Model switch
+    {
+        Correct c => $"Well done! Completed in {c.TimeTakenSeconds} seconds.",
+        Incorrect inc => $"Incorrect answer. The correct answer was {inc.CorrectAnswer}.",
+        TimeExpired exp => $"Time ran out! Elapsed time: {exp.TimeTakenSeconds}s.",
+        SessionNotFound => "Session was not found or has expired.",
+        _ => "An unexpected error occurred."
+    };
+}
+
+<p class="mb-0">@message</p>

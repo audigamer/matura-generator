@@ -1,46 +1,60 @@
-@model MaturaGenerator.Models.GeneratedProblem
+@using static MaturaGenerator.Models.ViewModels.PracticeSessionViewModel
+@model MaturaGenerator.Models.ViewModels.PracticeSessionViewModel
 
 @{
-    ViewData["Title"] = "Generated Problem";
+    ViewData["Title"] = "Practice Problem";
 }
 
 <div class="container py-4">
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="alert alert-warning shadow-sm mb-4">
-        <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Generation Failed</h5>
-        <p class="mb-2">@Model.ErrorMessage</p>
-        <hr />
-        <div class="d-flex gap-2">
-            <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-warning btn-sm">
-                <i class="bi bi-arrow-repeat"></i> Try Again
-            </a>
-            <a asp-action="Edit" asp-controller="ProblemTemplate" asp-route-id="@Model.Template.Id" class="btn btn-outline-secondary btn-sm">
-                Edit Template Rules
-            </a>
-            <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-sm">Back to List</a>
-        </div>
-    </div>
-}
-else
-{
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">@Model.Template.Title</h4>
-            <span class="badge bg-light text-primary">Grade @Model.Template.TargetGrade</span>
-        </div>
-        <div class="card-body text-center py-5">
-            <h5 class="text-muted mb-3">Generated Problem</h5>
-            <div class="fs-4 my-4 p-4 bg-light rounded border text-start">
-                @Model.RenderedText
+    @switch (Model)
+    {
+        case Error err:
+            <div class="alert alert-warning shadow-sm mb-4">
+                <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Generation Failed</h5>
+                <p class="mb-2">@err.Message</p>
+                <hr/>
+                <div class="d-flex gap-2">
+                    <a asp-action="Generate" asp-route-id="@err.Template.Id" class="btn btn-warning btn-sm">
+                        <i class="bi bi-arrow-repeat"></i> Try Again
+                    </a>
+                    <a asp-action="Edit" asp-controller="ProblemTemplate" asp-route-id="@err.Template.Id"
+                       class="btn btn-outline-secondary btn-sm">
+                        Edit Template Rules
+                    </a>
+                    <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-sm">Back
+                        to List</a>
+                </div>
             </div>
-            <div>
-                <a asp-action="Generate" asp-route-id="@Model.Template.Id" class="btn btn-primary btn-lg me-2">
-                    <i class="bi bi-arrow-repeat"></i> Regenerate
-                </a>
-                <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-lg">Back to List</a>
+            break;
+
+        case Active active:
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">@active.Problem.Template.Title</h4>
+                    <span class="badge bg-light text-primary">Grade @active.Problem.Template.TargetGrade</span>
+                </div>
+                <div class="card-body text-center py-5">
+                    <h5 class="text-muted mb-3">Generated Problem</h5>
+                    <div class="fs-4 my-4 p-4 bg-light rounded border text-start">
+                        @active.Problem.RenderedText
+                    </div>
+                    
+                    <partial name="_AnswerInputPartial" model="active"/>
+                    
+                    <div>
+                        <a asp-action="Generate" asp-route-id="@active.Problem.Template.Id"
+                           class="btn btn-primary btn-lg me-2">
+                            <i class="bi bi-arrow-repeat"></i> Regenerate
+                        </a>
+                        <a asp-action="Index" asp-controller="ProblemTemplate" class="btn btn-outline-secondary btn-lg">Back
+                            to List</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-}
+            break;
+    }
 </div>
+
+@section Scripts {
+    <script src="~/js/practice-answer.js" asp-append-version="true"></script>
+}
