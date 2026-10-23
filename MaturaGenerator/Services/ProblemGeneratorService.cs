@@ -20,14 +20,42 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         var assignments = ResolveValidAssignments(template);
         var (renderedStatement, ast) = RenderStatement(template.Statement, assignments);
 
+        decimal expectedAnswer = GetExpectedAnswer(template.AnswerRule?.CorrectAnswerRule, assignments);
+        
+
         return new GeneratedProblem
         {
             Template = template,
             RenderedText = renderedStatement,
             Latex = renderedStatement,
             Ast = ast,
-            ConstantAssignments = assignments
+            ConstantAssignments = assignments,
+            ExpectedAnswer = expectedAnswer
         };
+    }
+
+    private decimal GetExpectedAnswer(
+        string? correctAnswerRule,
+        IReadOnlyDictionary<string,object> constantAssignments)
+    {
+        if (string.IsNullOrWhiteSpace(correctAnswerRule))
+        {
+            throw new InvalidOperationException(
+                "Cannot practice or evaluate this problem because it does not have a configured AnswerRule.");
+        }
+        
+        try
+        {
+            var rawResult = ruleEvaluator.Evaluate(correctAnswerRule, constantAssignments);
+            return Convert.ToDecimal(rawResult);
+        }
+        catch (Exception e)
+        {
+
+            throw new InvalidOperationException(
+                $"Couldn't evaluate the correct answer for ProblemTemplate with answer rule {correctAnswerRule}. Check for syntax errors.");
+        }
+        
     }
 
     private static void ValidateTemplate(ProblemTemplate template)
