@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - МатураГенератор</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/MaturaGenerator.styles.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
@@ -15,9 +18,12 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light navbar-app mb-4">
         <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="ProblemTemplate" asp-action="Index">МатураГенератор</a>
+            <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="ProblemTemplate" asp-action="Index">
+                <span class="fs-4">📐</span>
+                <span>МатураГенератор</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -25,10 +31,10 @@
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="ProblemTemplate" asp-action="Index">Начало</a>
+                        <a class="nav-link" asp-area="" asp-controller="ProblemTemplate" asp-action="Index">Начало</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="ProblemTemplate" asp-action="Create">Създаване</a>
+                        <a class="nav-link" asp-area="" asp-controller="ProblemTemplate" asp-action="Create">Създаване</a>
                     </li>
                 </ul>
             </div>
@@ -41,11 +47,6 @@
     </main>
 </div>
 
-@* <footer class="border-top footer text-muted"> *@
-@*     <div class="container"> *@
-@*         &copy; 2026 - MaturaGenerator - <a asp-area="" asp-controller="Error" asp-action="Privacy">Privacy</a> *@
-@*     </div> *@
-@* </footer> *@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

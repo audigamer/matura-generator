@@ -1,5 +1,32 @@
+/* Custom Theme for MaturaGenerator */
+:root {
+  --bs-font-sans-serif: 'Ubuntu', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --bs-body-font-family: var(--bs-font-sans-serif);
+  
+  /* Academic Indigo & Emerald Theme */
+  --bs-primary: #4338ca;
+  --bs-primary-rgb: 67, 56, 202;
+  --bs-primary-text-emphasis: #312e81;
+  --bs-primary-bg-subtle: #e0e7ff;
+  --bs-primary-border-subtle: #c7d2fe;
+
+  --bs-success: #059669;
+  --bs-success-rgb: 5, 150, 105;
+  --bs-success-text-emphasis: #064e3b;
+  --bs-success-bg-subtle: #d1fae5;
+  --bs-success-border-subtle: #a7f3d0;
+
+  --bs-info: #0284c7;
+  --bs-info-rgb: 2, 132, 199;
+  --bs-info-text-emphasis: #0c4a6e;
+  --bs-info-bg-subtle: #e0f2fe;
+  --bs-info-border-subtle: #bae6fd;
+}
+
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,24 +35,98 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
+  font-family: var(--bs-body-font-family);
+  background-color: #f8fafc;
+  color: #1e293b;
   margin-bottom: 60px;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem rgba(67, 56, 202, 0.25);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Navbar */
+.navbar-app {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #312e81 !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #475569 !important;
+  transition: color 0.15s ease-in-out;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #4338ca !important;
+}
+
+/* Cards & Containers */
+.card {
+  border-color: #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.card-header {
+  border-bottom-color: #e2e8f0;
+}
+
+/* KaTeX formula rendering size */
+.katex {
+  font-size: 1.15em;
+}
+
+/* Interactive Slider */
+input[type=range].form-range::-webkit-slider-thumb {
+  background-color: #4338ca;
+}
+input[type=range].form-range::-moz-range-thumb {
+  background-color: #4338ca;
+}
+
+/* Buttons */
+.btn {
+  font-weight: 500;
+  border-radius: 0.5rem;
+}
+
+.btn-primary {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: #3730a3;
+  border-color: #3730a3;
+}
+
+.btn-success {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.btn-success:hover, .btn-success:focus {
+  background-color: #047857;
+  border-color: #047857;
+}
+
+.btn-info {
+  background-color: #0284c7;
+  border-color: #0284c7;
+  color: #fff;
+}
+
+.btn-info:hover, .btn-info:focus {
+  background-color: #0369a1;
+  border-color: #0369a1;
+  color: #fff;
 }
