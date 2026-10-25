@@ -11,13 +11,13 @@ public class PracticeController(
     IPracticeService practiceService): Controller
 {
     [HttpGet]
-    public IActionResult Generate(int id)
+    public async Task<IActionResult> Generate(int id)
     {
-        var template = context.ProblemTemplates
+        var template = await context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
             .Include(t => t.AnswerRule)
-            .FirstOrDefault(t => t.Id == id);
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         if (template == null) return NotFound();
 

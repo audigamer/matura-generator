@@ -11,8 +11,8 @@ public class ProblemTemplateController(
     MaturaDbContext context,
     IRuleEvaluator ruleEvaluator) : Controller
 {
-    public IActionResult Index() =>
-        View(context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToList());
+    public async Task<IActionResult> Index() =>
+        View(await context.ProblemTemplates.AsNoTracking().OrderByDescending(t => t.CreatedAt).ToListAsync());
     
 
     [HttpGet]
@@ -20,7 +20,7 @@ public class ProblemTemplateController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(ProblemTemplateViewModel model)
+    public async Task<IActionResult> Create(ProblemTemplateViewModel model)
     {
         ValidateRules(model);
 
@@ -44,19 +44,19 @@ public class ProblemTemplateController(
         };
 
         context.ProblemTemplates.Add(template);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public IActionResult Edit(int id)
+    public async Task<IActionResult> Edit(int id)
     {
-        var template = context.ProblemTemplates
+        var template = await context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
             .Include(t => t.AnswerRule)
-            .FirstOrDefault(t => t.Id == id);
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         if (template == null)
         {
@@ -79,7 +79,7 @@ public class ProblemTemplateController(
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, ProblemTemplateViewModel model)
+    public async Task<IActionResult> Edit(int id, ProblemTemplateViewModel model)
     {
         if (id != model.Id)
         {
@@ -93,11 +93,11 @@ public class ProblemTemplateController(
             return View(model);
         }
 
-        var existing = context.ProblemTemplates
+        var existing = await context.ProblemTemplates
             .Include(t => t.Domains)
             .Include(t => t.Rules)
             .Include(t => t.AnswerRule)
-            .FirstOrDefault(t => t.Id == id);
+            .FirstOrDefaultAsync(t => t.Id == id);
 
         if (existing == null)
         {
@@ -127,19 +127,19 @@ public class ProblemTemplateController(
 
         existing.AnswerRule = model.AnswerRule.ToAnswerEntity();
 
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var template = context.ProblemTemplates.Find(id);
         if (template != null)
         {
             context.ProblemTemplates.Remove(template);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         return RedirectToAction(nameof(Index));
