@@ -9,7 +9,7 @@
                 <input type="hidden" name="sessionId" value="@Model.SessionId" />
 
                 <label for="answerSlider" class="form-label d-flex justify-content-between">
-                    <span>Select your answer:</span>
+                    <span>Изберете отговор:</span>
                     <span class="fw-bold fs-5 text-primary" id="sliderValue">@custom.SliderBottomBound</span>
                 </label>
 
@@ -28,7 +28,7 @@
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn btn-success w-100">
-                    Submit Answer
+                    Проверка
                 </button>
             </form>
             break;
@@ -37,7 +37,7 @@
             throw new NotImplementedException("Multi-choice answer rules are not yet implemented.");
 
         default:
-            <div class="alert alert-secondary mb-0">No answer rule configured for this problem.</div>
+            <div class="alert alert-secondary mb-0">Тази задача няма нагласено правило за отговорите.</div>
             break;
     }
 

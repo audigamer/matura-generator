@@ -1,10 +1,10 @@
 @model List<MaturaGenerator.Models.ViewModels.DomainInputModel>
 
 <div class="mb-4">
-    <h5>Constant Domains</h5>
+    <h5>Множества на константите</h5>
     <div id="domainsContainer" class="border rounded p-3 bg-light">
         <p id="emptyState" class="text-muted m-0" style="@(Model.Count > 0 ? "display:none;" : "")">
-            Type constants in the Statement (e.g. <code>@@A</code>, <code>@@B</code>) to configure them here.
+            Въведете константи в условието (напр. <code>@@A</code>, <code>@@B</code>) и ги нагласите тук.
         </p>
 
         @for (int i = 0; i < Model.Count; i++)
@@ -14,35 +14,35 @@
                     <span class="badge bg-primary fs-6 domain-badge">@@@Model[i].ConstantName</span>
                     <input type="hidden" class="domain-name" asp-for="@Model[i].ConstantName" />
                     <select class="form-select form-select-sm w-auto type-select" asp-for="@Model[i].Type">
-                        <option value="int">Integer</option>
-                        <option value="fraction">Fraction</option>
+                        <option value="int">Цяло число</option>
+                        <option value="fraction">Обикновена дроб</option>
                     </select>
                 </div>
                 <div class="int-fields d-flex gap-2 @(Model[i].Type == "fraction" ? "d-none" : "")">
                     <div>
-                        <label class="form-label small text-muted mb-0">Min</label>
+                        <label class="form-label small text-muted mb-0">Минимум</label>
                         <input type="number" class="form-control form-control-sm min-val" asp-for="@Model[i].MinValue" />
                     </div>
                     <div>
-                        <label class="form-label small text-muted mb-0">Max</label>
+                        <label class="form-label small text-muted mb-0">Максимум</label>
                         <input type="number" class="form-control form-control-sm max-val" asp-for="@Model[i].MaxValue" />
                     </div>
                 </div>
                 <div class="fraction-fields row g-2 @(Model[i].Type == "int" ? "d-none" : "")">
                     <div class="col-6">
-                        <label class="form-label small text-muted mb-0">Min Numerator</label>
+                        <label class="form-label small text-muted mb-0">Минимум на числител</label>
                         <input type="number" class="form-control form-control-sm min-num" asp-for="@Model[i].MinNumerator" />
                     </div>
                     <div class="col-6">
-                        <label class="form-label small text-muted mb-0">Max Numerator</label>
+                        <label class="form-label small text-muted mb-0">Максимум на числител</label>
                         <input type="number" class="form-control form-control-sm max-num" asp-for="@Model[i].MaxNumerator" />
                     </div>
                     <div class="col-6">
-                        <label class="form-label small text-muted mb-0">Min Denominator</label>
+                        <label class="form-label small text-muted mb-0">Минимум на знаменател</label>
                         <input type="number" class="form-control form-control-sm min-den" asp-for="@Model[i].MinDenominator" />
                     </div>
                     <div class="col-6">
-                        <label class="form-label small text-muted mb-0">Max Denominator</label>
+                        <label class="form-label small text-muted mb-0">Максимум на знаменател</label>
                         <input type="number" class="form-control form-control-sm max-den" asp-for="@Model[i].MaxDenominator" />
                     </div>
                 </div>
@@ -57,35 +57,35 @@
             <span class="badge bg-primary fs-6 domain-badge"></span>
             <input type="hidden" class="domain-name" />
             <select class="form-select form-select-sm w-auto type-select">
-                <option value="int">Integer</option>
-                <option value="fraction">Fraction</option>
+                <option value="int">Цяло число</option>
+                <option value="fraction">Обикновена дроб</option>
             </select>
         </div>
         <div class="int-fields d-flex gap-2">
             <div>
-                <label class="form-label small text-muted mb-0">Min</label>
+                <label class="form-label small text-muted mb-0">Минимум</label>
                 <input type="number" class="form-control form-control-sm min-val" value="1" />
             </div>
             <div>
-                <label class="form-label small text-muted mb-0">Max</label>
+                <label class="form-label small text-muted mb-0">Максимум</label>
                 <input type="number" class="form-control form-control-sm max-val" value="10" />
             </div>
         </div>
         <div class="fraction-fields d-none row g-2">
             <div class="col-6">
-                <label class="form-label small text-muted mb-0">Min Numerator</label>
+                <label class="form-label small text-muted mb-0">Минимум на числител</label>
                 <input type="number" class="form-control form-control-sm min-num" value="1" />
             </div>
             <div class="col-6">
-                <label class="form-label small text-muted mb-0">Max Numerator</label>
+                <label class="form-label small text-muted mb-0">Максимум на числител</label>
                 <input type="number" class="form-control form-control-sm max-num" value="10" />
             </div>
             <div class="col-6">
-                <label class="form-label small text-muted mb-0">Min Denominator</label>
+                <label class="form-label small text-muted mb-0">Минимум на знаменател</label>
                 <input type="number" class="form-control form-control-sm min-den" value="1" />
             </div>
             <div class="col-6">
-                <label class="form-label small text-muted mb-0">Max Denominator</label>
+                <label class="form-label small text-muted mb-0">Максимум на знаменател</label>
                 <input type="number" class="form-control form-control-sm max-den" value="10" />
             </div>
         </div>

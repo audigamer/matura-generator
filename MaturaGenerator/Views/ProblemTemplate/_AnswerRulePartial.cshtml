@@ -1,41 +1,41 @@
 @model MaturaGenerator.Models.ViewModels.AnswersInputModel
 
 <div class="mb-4">
-    <h5>Answer Configuration</h5>
+    <h5>Настройка на отговора</h5>
     <div class="border rounded p-3 bg-light">
 
         <!-- Answer Type Selection -->
         <div class="mb-3">
-            <label class="form-label fw-bold">Answer Type</label>
+            <label class="form-label fw-bold">Вид отговор</label>
             <div class="d-flex gap-3">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="AnswerRule.Type" value="custom" id="typeCustom" @(Model.Type == "custom" ? "checked" : "") />
-                    <label class="form-check-label" for="typeCustom">Custom / Numeric Slider</label>
+                    <label class="form-check-label" for="typeCustom">Свободен (избор чрез слайдър)</label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="AnswerRule.Type" value="multichoice" id="typeMulti" @(Model.Type == "multichoice" ? "checked" : "") />
-                    <label class="form-check-label" for="typeMulti">Multiple Choice</label>
+                    <label class="form-check-label" for="typeMulti">Затворени отговори</label>
                 </div>
             </div>
         </div>
 
         <!-- Correct Answer Expression -->
         <div class="mb-3">
-            <label asp-for="CorrectAnswerRule" class="form-label fw-bold">Correct Answer Expression</label>
+            <label asp-for="CorrectAnswerRule" class="form-label fw-bold">Израз за правилния отговор</label>
             <input asp-for="CorrectAnswerRule" name="AnswerRule.CorrectAnswerRule" class="form-control form-control-sm" placeholder="e.g. A + B or 2 * A" required />
             <span asp-validation-for="CorrectAnswerRule" class="text-danger small"></span>
         </div>
 
         <!-- Custom Slider Bounds Section -->
         <div id="customAnswerSection" class="@(Model.Type == "multichoice" ? "d-none" : "")">
-            <h6>Slider Settings</h6>
+            <h6>Настройки на слайдъра</h6>
             <div class="row g-2">
                 <div class="col-6">
-                    <label asp-for="SliderBottomBound" class="form-label small text-muted mb-0">Slider Min</label>
+                    <label asp-for="SliderBottomBound" class="form-label small text-muted mb-0">Минимална стойност</label>
                     <input asp-for="SliderBottomBound" name="AnswerRule.SliderBottomBound" class="form-control form-control-sm" type="number" />
                 </div>
                 <div class="col-6">
-                    <label asp-for="SliderUpperBound" class="form-label small text-muted mb-0">Slider Max</label>
+                    <label asp-for="SliderUpperBound" class="form-label small text-muted mb-0">Максимална стойност</label>
                     <input asp-for="SliderUpperBound" name="AnswerRule.SliderUpperBound" class="form-control form-control-sm" type="number" />
                 </div>
             </div>

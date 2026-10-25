@@ -4,11 +4,11 @@
 @{
     string message = Model switch
     {
-        Correct c => $"Well done! Completed in {c.TimeTakenSeconds} seconds.",
-        Incorrect inc => $"Incorrect answer. The correct answer was {inc.CorrectAnswer}.",
-        TimeExpired exp => $"Time ran out! Elapsed time: {exp.TimeTakenSeconds}s.",
-        SessionNotFound => "Session was not found or has expired.",
-        _ => "An unexpected error occurred."
+        Correct c => $"Браво! Завършено след {c.TimeTakenSeconds} секунди.",
+        Incorrect inc => $"Грешен отговор. Отговорът беше {inc.CorrectAnswer}.",
+        TimeExpired exp => $"Времето изтече! Време: {exp.TimeTakenSeconds} секунди.",
+        SessionNotFound => "Сесията не беше намерена или е изтекла.",
+        _ => "Възникна неочаквана грешка."
     };
 }
 

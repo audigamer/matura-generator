@@ -1,10 +1,10 @@
 @model MaturaGenerator.Models.ViewModels.ProblemTemplateViewModel
 
 @{
-    ViewData["Title"] = "Create Problem Template";
+    ViewData["Title"] = "Създаване на шаблон";
 }
 
-<h2>Create Problem Template</h2>
+<h2>Създаване на шаблон</h2>
 <hr />
 
 <div class="row">
@@ -12,8 +12,8 @@
         <form asp-action="Create" method="post" autocomplete="off">
             <partial name="_ProblemTemplateForm" model="Model" />
 
-            <button type="submit" class="btn btn-primary">Save Template</button>
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <button type="submit" class="btn btn-primary">Запазване</button>
+            <a asp-action="Index" class="btn btn-secondary">Към списъка</a>
         </form>
     </div>
 </div>

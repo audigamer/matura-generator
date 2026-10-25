@@ -1,14 +1,14 @@
 @model IEnumerable<MaturaGenerator.Models.ProblemTemplate>
 
-<h2>All Problem Templates</h2>
+<h2>Всички шаблони за задачи</h2>
 
 <table class="table">
     <thead>
     <tr>
-        <th>Title</th>
-        <th>Grade</th>
-        <th>Statement</th>
-        <th>Created At</th>
+        <th>Заглавие</th>
+        <th>Клас</th>
+        <th>Условие</th>
+        <th>Създаден на</th>
     </tr>
     </thead>
     <tbody>
@@ -20,11 +20,11 @@
             <td>@item.Statement</td>
             <td>@item.CreatedAt.ToLocalTime().ToString("g")</td>
             <td>
-                <a asp-action="Generate" asp-controller="Practice" asp-route-id="@item.Id" class="btn btn-primary btn-sm me-1">Practice</a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm me-1">Edit</a>
+                <a asp-action="Generate" asp-controller="Practice" asp-route-id="@item.Id" class="btn btn-primary btn-sm me-1">Решаване</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm me-1">Редактиране</a>
                 <form asp-action="Delete" asp-route-id="@item.Id" method="post" style="display:inline;"
-                      onsubmit="return confirm('Are you sure you want to delete this template?');">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                      onsubmit="return confirm('Сигурни ли сте, че искате да изтриете този шаблон?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Изтриване</button>
                 </form>
             </td>
         </tr>
