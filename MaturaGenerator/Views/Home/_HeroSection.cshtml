@@ -1,0 +1,24 @@
+<div class="card shadow-sm border-0 p-4 p-md-5 mb-4 bg-white rounded-2">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="fs-2">📐</span>
+                <h1 class="h2 fw-bold text-dark mb-0">МатураГенератор</h1>
+            </div>
+            <p class="text-primary fw-medium mb-3">Система за процедурно генериране на математически задачи</p>
+            <p class="text-secondary mb-4">
+                Повечето платформи за подготовка съхраняват ръчно написани въпроси в база данни. 
+                Този проект генерира задачи процедурно чрез шаблони с интервали и математически правила,
+                което гарантира различни задачи при всяко зареждане.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="ProblemTemplate" asp-action="Index" class="btn btn-primary px-4 py-2">
+                    Към шаблоните
+                </a>
+                <a asp-controller="ProblemTemplate" asp-action="Create" class="btn btn-outline-secondary px-4 py-2">
+                    + Нов шаблон
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
