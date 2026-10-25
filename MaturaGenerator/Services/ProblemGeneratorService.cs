@@ -36,14 +36,11 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
 
     private decimal GetExpectedAnswer(
         string? correctAnswerRule,
-        IReadOnlyDictionary<string,object> constantAssignments)
+        IReadOnlyDictionary<string, object> constantAssignments)
     {
         if (string.IsNullOrWhiteSpace(correctAnswerRule))
-        {
-            throw new InvalidOperationException(
-                "Cannot practice or evaluate this problem because it does not have a configured AnswerRule.");
-        }
-        
+            throw new ProblemGenerationException(ProblemGenerationError.MissingAnswerRule);
+
         try
         {
             var rawResult = ruleEvaluator.Evaluate(correctAnswerRule, constantAssignments);
@@ -51,12 +48,10 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         }
         catch (Exception e)
         {
-
-            throw new InvalidOperationException(
-                $"Couldn't evaluate the correct answer for ProblemTemplate with answer rule {correctAnswerRule}. Check for syntax errors.");
+            throw new ProblemGenerationException(ProblemGenerationError.InvalidAnswerRuleSyntax, e);
         }
-        
-    }
+
+}
 
     private static void ValidateTemplate(ProblemTemplate template)
     {
@@ -123,9 +118,9 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
 
             return (latex, simplifiedAst);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            throw new FormatException($"Failed to parse math expression '[{mathExpr}]' in statement: {ex.Message}", ex);
+            throw new ProblemGenerationException(ProblemGenerationError.StatementParsingError, e);
         }
     }
 

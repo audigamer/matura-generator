@@ -6,5 +6,7 @@ public abstract record PracticeSessionViewModel
 
     public record Active(Guid SessionId, GeneratedProblem Problem, int TimeLimitSeconds) :
         PracticeSessionViewModel;
-    public record Error(ProblemTemplate Template, string Message) : PracticeSessionViewModel;
+
+    public record Error(ProblemTemplate Template, ProblemGenerationError Details) :
+        PracticeSessionViewModel;
 }

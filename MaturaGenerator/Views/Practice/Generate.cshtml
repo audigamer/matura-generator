@@ -11,7 +11,7 @@
         case Error err:
             <div class="alert alert-warning shadow-sm mb-4">
                 <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Генерирането е неуспешно</h5>
-                <p class="mb-2">@err.Message</p>
+                <p class="mb-2">@err.Details.Description</p>
                 <hr/>
                 <div class="d-flex gap-2">
                     <a asp-action="Generate" asp-route-id="@err.Template.Id" class="btn btn-warning btn-sm">

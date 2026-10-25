@@ -34,9 +34,9 @@ public class PracticeService(
 
             return new PracticeSessionViewModel.Active(sessionId, problem, timeLimitSeconds);
         }
-        catch (InvalidOperationException e)
+        catch (ProblemGenerationException e)
         {
-            return new PracticeSessionViewModel.Error(template, e.Message);
+            return new PracticeSessionViewModel.Error(template, e.Error);
         }
 
     }
