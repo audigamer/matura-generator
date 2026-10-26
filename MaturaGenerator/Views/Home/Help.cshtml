@@ -1,0 +1,132 @@
+@{
+    ViewData["Title"] = "Помощ и ръководство";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h2 class="mb-3">Как се създават задачи в генератора</h2>
+                <p class="text-muted">
+                    Тук накратко е обяснено как се описва условието, как се конфигурират константите и как се пишат правилата за тях.
+                </p>
+
+                <hr class="my-4" />
+
+                <!-- Секция 1: Условие на задачата -->
+                <div class="mb-4">
+                    <h4 class="h5">1. Условие (Текст и математически изрази)</h4>
+                    <p>
+                        Текстът на задачата се пише нормално, а математическите формули се ограждат в квадратни скоби <code>[...]</code>.
+                        Местата, където искаш генераторът да постави случайно избрана стойност, се означават като константи с префикс <code>@@</code> (например <code>@@A</code>, <code>@@B</code>, <code>@@C</code>).
+                    </p>
+                    <div class="p-3 bg-light rounded border mb-2 font-monospace">
+                        Решете уравнението [@@Ax + @@B = @@C] спрямо x:
+                    </div>
+                    <small class="text-muted">
+                        След генериране съдържанието в <code>[...]</code> се превръща автоматично в математическа формула.
+                    </small>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Секция 2: Константи (Domains) -->
+                <div class="mb-4">
+                    <h4 class="h5">2. Настройка на константите</h4>
+                    <p>
+                        За всяка константа, посочена в условието (например <code>A</code>, <code>B</code>, <code>C</code>), се избира интервал на стойностите:
+                    </p>
+                    <ul>
+                        <li><strong>Цяло число (Integer):</strong> задава се минимална и максимална стойност (напр. от -10 до 10).</li>
+                        <li><strong>Дроб (Fraction):</strong> задават се граници отделно за числителя и знаменателя.</li>
+                    </ul>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Секция 3: Правила (Invariants / NCalc) -->
+                <div class="mb-4">
+                    <h4 class="h5">3. Правила за валидност (NCalc изрази)</h4>
+                    <p>
+                        Правилата са булеви изрази. Генераторът пробва различни комбинации от стойности за константите, докато не намери такива, за които всички правила са изпълнени (връщат <code>true</code>).
+                    </p>
+                    <p class="mb-2">
+                        В самите правила константите се изписват директно с буквите им: <strong><code>A</code></strong>, <strong><code>B</code></strong>, <strong><code>C</code></strong> (без <code>@@</code> и без скоби).
+                    </p>
+
+                    <h6 class="mt-3">Основни оператори:</h6>
+                    <ul>
+                        <li><strong>Сравнения:</strong> <code>==</code> (равно), <code>!=</code> (различно), <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code></li>
+                        <li><strong>Логически:</strong> <code>&amp;&amp;</code> (И), <code>||</code> (ИЛИ), <code>!</code> (НЕ)</li>
+                        <li><strong>Аритметика:</strong> <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code></li>
+                    </ul>
+
+                    <h6 class="mt-3">Примери за правила:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 45%;">Израз</th>
+                                    <th>Какво прави</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>A != 0</code></td>
+                                    <td>Гарантира, че константата A няма да бъде нула (напр. коефициентът пред x).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>isinteger((C - B) / A)</code></td>
+                                    <td>Проверява дали отговорът на уравнението ще се получи цяло число.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>(C - B) % A == 0</code></td>
+                                    <td>Алтернативен начин за проверка дали делението е точно (без остатък).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>B * B - 4 * A * C &gt;= 0</code></td>
+                                    <td>Дискриминантата на $Ax^2 + Bx + C = 0$ да е неотрицателна (да има реални корени).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>A != B &amp;&amp; B != C</code></td>
+                                    <td>Стойностите на константите да са различни една от друга.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h6 class="mt-3">Полезни функции в изразите:</h6>
+                    <ul>
+                        <li><code>isinteger(x)</code> — връща <code>true</code>, ако стойността е цяло число.</li>
+                        <li><code>Abs(x)</code> — абсолютна стойност (модул).</li>
+                        <li><code>Sqrt(x)</code> — квадратен корен.</li>
+                        <li><code>Pow(x, y)</code> — степенуване (x на степен y).</li>
+                    </ul>
+                </div>
+
+                <hr class="my-4" />
+
+                <!-- Секция 4: Формула за отговор -->
+                <div class="mb-4">
+                    <h4 class="h5">4. Формула за верен отговор</h4>
+                    <p>
+                        За да може системата да провери отговора на решаващия, се въвежда математическа формула за верния резултат.
+                    </p>
+                    <p>
+                        Например за линейно уравнение от вида $Ax + B = C$, решението е $x = \frac{C - B}{A}$, съответно формулата се записва като:
+                    </p>
+                    <div class="p-3 bg-light rounded border mb-2 font-monospace">
+                        (C - B) / A
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-2 border-top text-end">
+                    <a asp-controller="ProblemTemplate" asp-action="Create" class="btn btn-primary">
+                        Към създаване на задача &rarr;
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

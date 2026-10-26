@@ -17,4 +17,9 @@ public class HomeController(MaturaDbContext context) : Controller
 
         return View(sampleTemplateId);
     }
+
+    public IActionResult Help()
+    {
+        return View();
+    }
 }
