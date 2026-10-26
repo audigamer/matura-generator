@@ -1,19 +1,15 @@
-using MaturaGenerator.Data;
+using MaturaGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MaturaGenerator.Controllers;
 
-public class HomeController(MaturaDbContext context) : Controller
+public class HomeController(IProblemTemplateService templateService) : Controller
 {
     public async Task<IActionResult> Index()
     {
         const int showcasedProblemId = 1;
         
-        var sampleTemplateId = await context.ProblemTemplates
-            .Where(t => t.Id == showcasedProblemId)
-            .Select(t => t.Id)
-            .SingleAsync();
+        var sampleTemplateId = await templateService.GetSampleTemplateIdAsync(showcasedProblemId);
 
         return View(sampleTemplateId);
     }

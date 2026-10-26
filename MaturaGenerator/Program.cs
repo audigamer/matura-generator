@@ -12,6 +12,7 @@ builder.Services.AddDbContext<MaturaDbContext>(options =>
 builder.Services.AddSingleton<IRuleEvaluator, NCalcRuleEvaluator>();
 builder.Services.AddScoped<IProblemGeneratorService, ProblemGeneratorService>();
 builder.Services.AddScoped<IPracticeService, PracticeService>();
+builder.Services.AddScoped<IProblemTemplateService, ProblemTemplateService>();
 
 builder.Services.AddControllersWithViews();
 

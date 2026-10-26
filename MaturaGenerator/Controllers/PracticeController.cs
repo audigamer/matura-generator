@@ -1,23 +1,16 @@
-﻿using MaturaGenerator.Data;
-using MaturaGenerator.Models;
 using MaturaGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace MaturaGenerator.Controllers;
 
 public class PracticeController(
-    MaturaDbContext context,
+    IProblemTemplateService templateService,
     IPracticeService practiceService): Controller
 {
     [HttpGet]
     public async Task<IActionResult> Generate(int id)
     {
-        var template = await context.ProblemTemplates
-            .Include(t => t.Domains)
-            .Include(t => t.Rules)
-            .Include(t => t.AnswerRule)
-            .FirstOrDefaultAsync(t => t.Id == id);
+        var template = await templateService.GetTemplateByIdAsync(id);
 
         if (template == null) return NotFound();
 
