@@ -1,4 +1,4 @@
-﻿using MaturaGenerator.Models;
+using MaturaGenerator.Models;
 using MaturaGenerator.Models.ViewModels;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -17,7 +17,7 @@ public class PracticeService(
         {
             var problem = problemGenerator.Generate(template);
 
-            var timeLimitSeconds = DefaultProblemTimeSeconds; // TODO: Make dependent on the problem
+            var timeLimitSeconds = DefaultProblemTimeSeconds;
             var sessionId = Guid.NewGuid();
 
             var state = new PracticeProblemState
@@ -29,7 +29,6 @@ public class PracticeService(
                 TimeLimit = TimeSpan.FromSeconds(timeLimitSeconds)
             };
 
-            // Cache will be used temporarily as a simpler way to store practice sessions.
             cache.Set(sessionId, state, TimeSpan.FromSeconds(timeLimitSeconds + 60));
 
             return new PracticeSessionViewModel.Active(sessionId, problem, timeLimitSeconds);
@@ -38,7 +37,6 @@ public class PracticeService(
         {
             return new PracticeSessionViewModel.Error(template, e.Error);
         }
-
     }
 
     public AnswerCheckResult CheckAnswer(Guid sessionId, decimal userAnswer)
@@ -51,19 +49,18 @@ public class PracticeService(
         cache.Remove(sessionId);
 
         var elapsed = DateTimeOffset.UtcNow - state.StartedAt;
-        
-        Console.WriteLine($"userAnswer: {userAnswer}, correctAnswer: {state.CorrectAnswer}");
-        
+        var totalElapsedSeconds = (int)elapsed.TotalSeconds;
+
         if (elapsed > state.TimeLimit)
         {
-            return new AnswerCheckResult.Correct(elapsed.Seconds);
+            return new AnswerCheckResult.TimeExpired(totalElapsedSeconds);
         }
         
         bool isCorrect = Math.Abs(state.CorrectAnswer - userAnswer) < PrecisionTolerance;
 
         if (isCorrect)
-            return new AnswerCheckResult.Correct(elapsed.Seconds);
+            return new AnswerCheckResult.Correct(totalElapsedSeconds);
         
-        return new AnswerCheckResult.Incorrect(state.CorrectAnswer, elapsed.Seconds);
+        return new AnswerCheckResult.Incorrect(state.CorrectAnswer, totalElapsedSeconds);
     }
 }
