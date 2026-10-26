@@ -16,7 +16,27 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
     public GeneratedProblem Generate(ProblemTemplate template)
     {
         ValidateTemplate(template);
+        
+        // Time limit for the problem generation process.
+        // Avoids expressions that are very performance intensive or made to waste server resources
+        // E.g. 9999999!
+        try
+        {
+            return Task.Run(() => GenerateInternal(template))
+                .WaitAsync(TimeSpan.FromMilliseconds(500))
+                .GetAwaiter()
+                .GetResult();
+        }
+        catch (TimeoutException e)
+        {
+            throw new ProblemGenerationException(ProblemGenerationError.RuleEvaluationTimeout, e);
+        }
+        
+    }
 
+
+    private GeneratedProblem GenerateInternal(ProblemTemplate template)
+    {
         var assignments = ResolveValidAssignments(template);
         var (renderedStatement, ast) = RenderStatement(template.Statement, assignments);
 
@@ -33,6 +53,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
             ExpectedAnswer = expectedAnswer
         };
     }
+    
 
     private decimal GetExpectedAnswer(
         string? correctAnswerRule,

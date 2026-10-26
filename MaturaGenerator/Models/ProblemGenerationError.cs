@@ -17,4 +17,8 @@ public record ProblemGenerationError(string Code, string Description)
     public static readonly ProblemGenerationError StatementParsingError = new(
         nameof(StatementParsingError),
         "Възникна грешка при обработката на математическия израз в условието. Проверете синтаксиса в квадратните скоби.");
+
+    public static readonly ProblemGenerationError RuleEvaluationTimeout = new(
+        nameof(RuleEvaluationTimeout),
+        "Изчисляването на условието или отговора отне твърде много време и беше прекратено от съображения за сигурност.");
 }
