@@ -38,7 +38,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
     private GeneratedProblem GenerateInternal(ProblemTemplate template)
     {
         var assignments = ResolveValidAssignments(template);
-        var (renderedStatement, ast) = RenderStatement(template.Statement, assignments);
+        var renderedStatement = RenderStatement(template.Statement, assignments);
 
         decimal expectedAnswer = GetExpectedAnswer(template.AnswerRule?.CorrectAnswerRule, assignments);
 
@@ -58,9 +58,6 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         {
             Template = template,
             RenderedText = renderedStatement,
-            Latex = renderedStatement,
-            Ast = ast,
-            ConstantAssignments = assignments,
             ExpectedAnswer = expectedAnswer,
             AnswerInput = answerInput
         };
@@ -149,24 +146,19 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         throw new ProblemGenerationException(ProblemGenerationError.UnsatisfiableRules);
     }
 
-    private static (string RenderedText, MathNode? LastAst) RenderStatement(
+    private static string RenderStatement(
         string statement, 
         Dictionary<string, object> assignments)
     {
-        MathNode? lastAst = null;
-
-        var renderedText = MathBracketRegex.Replace(statement, match =>
+        return MathBracketRegex.Replace(statement, match =>
         {
             var mathExpr = match.Groups[1].Value.Trim();
-            var (latex, ast) = RenderMathExpression(mathExpr, assignments);
-            lastAst = ast;
+            var latex = RenderMathExpression(mathExpr, assignments);
             return $"${latex}$";
         });
-
-        return (renderedText, lastAst);
     }
 
-    private static (string Latex, MathNode Ast) RenderMathExpression(
+    private static string RenderMathExpression(
         string mathExpr, 
         Dictionary<string, object> assignments)
     {
@@ -175,9 +167,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
             var rawAst = MathParser.Parse(mathExpr);
             var substitutedAst = ConstantSubstitutor.Substitute(rawAst, assignments);
             var simplifiedAst = MathSimplifier.Simplify(substitutedAst);
-            var latex = LatexRenderer.Render(simplifiedAst);
-
-            return (latex, simplifiedAst);
+            return LatexRenderer.Render(simplifiedAst);
         }
         catch (Exception e)
         {
