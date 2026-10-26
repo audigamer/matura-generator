@@ -8,6 +8,5 @@ public class GeneratedProblem
     public MathEngine.Ast.MathNode? Ast { get; set; }
     public IReadOnlyDictionary<string, object> ConstantAssignments { get; set; } = new Dictionary<string, object>();
     public decimal ExpectedAnswer { get; set; }
-    public string? ErrorMessage { get; set; }
-    
+    public GeneratedAnswerInput AnswerInput { get; set; } = null!;
 }

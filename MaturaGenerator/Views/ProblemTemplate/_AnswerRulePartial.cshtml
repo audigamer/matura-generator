@@ -40,5 +40,28 @@
                 </div>
             </div>
         </div>
+
+        <!-- Multi-Choice Options Section -->
+        <div id="multiChoiceSection" class="@(Model.Type == "multichoice" ? "" : "d-none")">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Грешни отговори</h6>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="addChoiceBtn">
+                    + Добави опция
+                </button>
+            </div>
+            <p class="text-muted small mb-2">
+                Формули за грешните опции за избор. Верният отговор се включва автоматично към тях.
+            </p>
+            <div id="choicesContainer">
+                @for (int i = 0; i < Model.ChoiceRules.Count; i++)
+                {
+                    <div class="choice-row d-flex gap-2 mb-2 align-items-center">
+                        <input type="text" class="form-control form-control-sm choice-input" name="AnswerRule.ChoiceRules[@i]" value="@Model.ChoiceRules[i]" />
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-choice-btn">&times;</button>
+                    </div>
+                }
+            </div>
+        </div>
+
     </div>
 </div>

@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = document.createElement('div');
             row.className = 'choice-row d-flex gap-2 mb-2 align-items-center';
             row.innerHTML = `
-                <input type="text" class="form-control form-control-sm choice-input" name="AnswerRule.ChoiceRules[${index}]" placeholder="e.g. A - B" />
+                <input type="text" class="form-control form-control-sm choice-input" name="AnswerRule.ChoiceRules[${index}]" />
                 <button type="button" class="btn btn-outline-danger btn-sm remove-choice-btn">&times;</button>
             `;
 

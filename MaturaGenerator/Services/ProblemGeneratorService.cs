@@ -5,6 +5,8 @@ using MaturaGenerator.MathEngine.Parsing;
 using MaturaGenerator.MathEngine.Rendering;
 using MaturaGenerator.MathEngine.Transforms;
 using MaturaGenerator.Models;
+using MaturaGenerator.Models.AnswerRules;
+using MaturaGenerator.Models.DomainConstraints;
 
 namespace MaturaGenerator.Services;
 
@@ -31,9 +33,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         {
             throw new ProblemGenerationException(ProblemGenerationError.RuleEvaluationTimeout, e);
         }
-        
     }
-
 
     private GeneratedProblem GenerateInternal(ProblemTemplate template)
     {
@@ -41,7 +41,18 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         var (renderedStatement, ast) = RenderStatement(template.Statement, assignments);
 
         decimal expectedAnswer = GetExpectedAnswer(template.AnswerRule?.CorrectAnswerRule, assignments);
-        
+
+        GeneratedAnswerInput answerInput = template.AnswerRule switch
+        {
+            CustomAnswerRule custom => new GeneratedAnswerInput.Slider(
+                custom.SliderBottomBound,
+                custom.SliderUpperBound),
+
+            MultiChoiceAnswerRule multi => new GeneratedAnswerInput.MultipleChoice(
+                EvaluateChoices(multi, assignments, expectedAnswer)),
+
+            _ => throw new ProblemGenerationException(ProblemGenerationError.MissingAnswerRule)
+        };
 
         return new GeneratedProblem
         {
@@ -50,10 +61,35 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
             Latex = renderedStatement,
             Ast = ast,
             ConstantAssignments = assignments,
-            ExpectedAnswer = expectedAnswer
+            ExpectedAnswer = expectedAnswer,
+            AnswerInput = answerInput
         };
     }
-    
+
+    private IReadOnlyList<decimal> EvaluateChoices(
+        MultiChoiceAnswerRule multiChoice,
+        IReadOnlyDictionary<string, object> constantAssignments,
+        decimal expectedAnswer)
+    {
+        var options = new List<decimal> { expectedAnswer };
+
+        foreach (var choiceRule in multiChoice.ChoiceRules)
+        {
+            if (string.IsNullOrWhiteSpace(choiceRule)) continue;
+
+            try
+            {
+                var rawResult = ruleEvaluator.Evaluate(choiceRule, constantAssignments);
+                options.Add(Convert.ToDecimal(rawResult));
+            }
+            catch (Exception e)
+            {
+                throw new ProblemGenerationException(ProblemGenerationError.InvalidAnswerRuleSyntax, e);
+            }
+        }
+
+        return options.OrderBy(_ => Random.Shared.Next()).ToList();
+    }
 
     private decimal GetExpectedAnswer(
         string? correctAnswerRule,
@@ -71,8 +107,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
         {
             throw new ProblemGenerationException(ProblemGenerationError.InvalidAnswerRuleSyntax, e);
         }
-
-}
+    }
 
     private static void ValidateTemplate(ProblemTemplate template)
     {
@@ -83,6 +118,13 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
             throw new InvalidOperationException(
                 $"Cannot generate a problem from ProblemTemplate ID {template.Id} ('{template.Title}') because its '{nameof(template.Domains)}' collection was not loaded. " +
                 $"Ensure you queried the template using '.Include(t => t.Domains)'.");
+        }
+
+        if (template.Rules is null)
+        {
+            throw new InvalidOperationException(
+                $"Cannot generate a problem from ProblemTemplate ID {template.Id} ('{template.Title}') because its '{nameof(template.Rules)}' collection was not loaded. " +
+                $"Ensure you queried the template using '.Include(t => t.Rules)'.");
         }
     }
 

@@ -1,30 +1,30 @@
-@using MaturaGenerator.Models.AnswerRules
+@using MaturaGenerator.Models
 @model MaturaGenerator.Models.ViewModels.PracticeSessionViewModel.Active
 
-<div class="my-4 mx-auto" style="max-width: 500px;">
-    @switch (Model.Problem.Template.AnswerRule)
+<div class="my-4 mx-auto" style="max-width: 620px;">
+    @switch (Model.Problem.AnswerInput)
     {
-        case CustomAnswerRule custom:
+        case GeneratedAnswerInput.Slider slider:
             <form id="answerForm" asp-controller="Practice" asp-action="Check" method="get" class="text-start">
                 <input type="hidden" name="sessionId" value="@Model.SessionId" />
 
                 <label for="answerSlider" class="form-label d-flex justify-content-between">
                     <span>Изберете отговор:</span>
-                    <span class="fw-bold fs-5 text-primary" id="sliderValue">@custom.SliderBottomBound</span>
+                    <span class="fw-bold fs-5 text-primary" id="sliderValue">@slider.MinValue</span>
                 </label>
 
                 <input type="range"
                        class="form-range"
                        id="answerSlider"
                        name="answer"
-                       min="@custom.SliderBottomBound"
-                       max="@custom.SliderUpperBound"
-                       value="@custom.SliderBottomBound"
+                       min="@slider.MinValue"
+                       max="@slider.MaxValue"
+                       value="@slider.MinValue"
                        step="1" />
 
                 <div class="d-flex justify-content-between text-muted small mb-3">
-                    <span>@custom.SliderBottomBound</span>
-                    <span>@custom.SliderUpperBound</span>
+                    <span>@slider.MinValue</span>
+                    <span>@slider.MaxValue</span>
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn btn-success w-100">
@@ -33,8 +33,35 @@
             </form>
             break;
 
-        case MultiChoiceAnswerRule:
-            throw new NotImplementedException("Multi-choice answer rules are not yet implemented.");
+        case GeneratedAnswerInput.MultipleChoice multi:
+            <form id="answerForm" asp-controller="Practice" asp-action="Check" method="get" class="text-start">
+                <input type="hidden" name="sessionId" value="@Model.SessionId" />
+
+                <p class="fw-semibold text-center text-muted mb-3">Изберете един от посочените отговори:</p>
+
+                <div class="row g-2 mb-3">
+                    @{
+                        char optionLetter = 'А';
+                    }
+                    @foreach (var option in multi.Choices)
+                    {
+                        var radioId = $"choice_{optionLetter}";
+                        <div class="col-12 col-md-6">
+                            <label class="d-flex align-items-center gap-2 p-2 px-3 border rounded bg-white shadow-sm choice-item h-100 cursor-pointer m-0" for="@radioId">
+                                <input class="form-check-input flex-shrink-0 m-0" type="radio" name="answer" id="@radioId" value="@option" required />
+                                <span class="fw-bold text-secondary">@optionLetter)</span>
+                                <span class="fs-6">@option</span>
+                            </label>
+                        </div>
+                        optionLetter++;
+                    }
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-success w-100 py-2">
+                    Проверка
+                </button>
+            </form>
+            break;
 
         default:
             <div class="alert alert-secondary mb-0">Тази задача няма нагласено правило за отговорите.</div>

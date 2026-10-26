@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (submitBtn) submitBtn.disabled = true;
         if (slider) slider.disabled = true;
+        const radioInputs = form.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(r => r.disabled = true);
         
         try {
             const response = await fetch(`${checkUrl}?${params.toString()}`);
@@ -34,10 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } catch (err) {
             if (resultContainer) {
-                resultContainer.innerHTML = '<div class="alert alert-danger mt-3">Error submitting answer. Please try again.</div>';
+                resultContainer.innerHTML = '<div class="alert alert-danger mt-3">Възникна грешка при изпращането на отговора. Опитайте отново.</div>';
             }
             if (submitBtn) submitBtn.disabled = false;
             if (slider) slider.disabled = false;
+            radioInputs.forEach(r => r.disabled = false);
         }
     });
 });
