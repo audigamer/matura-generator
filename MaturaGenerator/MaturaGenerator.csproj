@@ -7,15 +7,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
+      <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\MaturaGenerator.MathEngine\MaturaGenerator.MathEngine.csproj" />
+    </ItemGroup>
+    
+    <!-- This moderate vulnerability has been properly addressed in ProblemGeneratorService !-->
+    <ItemGroup>
+        <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-3w5p-95mh-gq75" />
     </ItemGroup>
 
 </Project>

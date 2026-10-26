@@ -6,8 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);GHSA-3w5p-95mh-gq75</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="NCalcSync" Version="5.3.1" />
   </ItemGroup>
 
+  <!-- This moderate vulnerability has been properly addressed in ProblemGeneratorService !-->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-3w5p-95mh-gq75" />
+  </ItemGroup>
 </Project>
