@@ -104,9 +104,7 @@ public class ProblemGeneratorService(IRuleEvaluator ruleEvaluator) : IProblemGen
             }
         }
 
-        throw new InvalidOperationException(
-            $"Unable to satisfy template rules for ProblemTemplate ID {template.Id} ('{template.Title}') after {MaxAttempts} attempts. " +
-            $"Please verify that the domains and rules are mathematically satisfiable.");
+        throw new ProblemGenerationException(ProblemGenerationError.UnsatisfiableRules);
     }
 
     private static (string RenderedText, MathNode? LastAst) RenderStatement(
