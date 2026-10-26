@@ -12,7 +12,7 @@ public class FractionDomain : DomainConstraint
     
     public override object GenerateValue(Random rng)
         => new Fraction(
-            rng.Next(MinNumerator, MaxNumerator),
-            rng.Next(MinDenominator, MaxDenominator)
+            rng.Next(MinNumerator, MaxNumerator + 1),
+            rng.Next(MinDenominator, MaxDenominator + 1)
         );
 }

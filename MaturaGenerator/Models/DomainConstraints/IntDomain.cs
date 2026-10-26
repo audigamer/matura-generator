@@ -6,5 +6,5 @@ public class IntDomain : DomainConstraint
     public int MaxValue { get; set; }
     
     public override object GenerateValue(Random rng)
-        => rng.Next(MinValue, MaxValue);
+        => rng.Next(MinValue, MaxValue + 1);
 }
