@@ -6,17 +6,17 @@ public class ProblemTemplateViewModel
 {
     public int Id { get; set; }
 
-    [Required]
-    [MaxLength(150)]
+    [Required(ErrorMessage = "Полето „{0}“ е задължително.")]
+    [MaxLength(60, ErrorMessage = "„{0}“ не може да бъде по-дълго от {1} символа.")]
     [Display(Name = "Заглавие")]
     public string Title { get; set; } = string.Empty;
 
-    [Required]
-    [MaxLength(2000)]
+    [Required(ErrorMessage = "Полето „{0}“ е задължително.")]
+    [MaxLength(300, ErrorMessage = "„{0}“ не може да бъде по-дълго от {1} символа.")]
     [Display(Name = "Условие")]
     public string Statement { get; set; } = string.Empty;
 
-    [Range(1, 12)]
+    [Range(1, 12, ErrorMessage = "„{0}“ трябва да бъде между {1} и {2}.")]
     [Display(Name = "Клас")]
     public int TargetGrade { get; set; } = 7;
 
