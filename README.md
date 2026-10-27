@@ -4,6 +4,27 @@ MaturaGenerator is a tool that helps students prepare for bulgarian state exams 
 
 This is work in progress and serves as my course project for the **ASP.NET Fundamentals** course at SoftUni.
 
+
+## Getting Started
+
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/)
+- Microsoft SQL Server / LocalDB / SQLEXPRESS
+    
+### Setup
+
+1. Clone the repository.
+2. Check `appsettings.json` and adjust the connection string to your local SQL Server if necessary.
+3. Apply database migrations:
+
+   `dotnet ef database update --project MaturaGenerator`
+4. Run the project:
+
+   `dotnet run --project MaturaGenerator`
+
+
+
 ## Key Features
 
 ### Problem Templates and Generation
