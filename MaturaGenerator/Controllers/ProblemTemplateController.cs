@@ -68,6 +68,7 @@ public class ProblemTemplateController(
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
         await templateService.DeleteTemplateAsync(id);
@@ -81,7 +82,7 @@ public class ProblemTemplateController(
             var error = ruleEvaluator.ValidateRule(model.Rules[i]);
             if (error != null)
             {
-                ModelState.AddModelError($"Rules[{i}]", $"Invalid rule syntax: {error}");
+                ModelState.AddModelError($"Rules[{i}]", $"Невалиден синтаксис на правило: {error}");
             }
         }
     }
